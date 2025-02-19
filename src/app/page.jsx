@@ -1,3 +1,4 @@
+'use client'
 import Image from "next/image";
 
 import Logo from "../../public/logo-pacenatela.svg";
@@ -19,8 +20,13 @@ import PostsDivertidos from "../../public/postsdivertidos.png";
 import MenuHamburger from "@/components/MenuHamburger";
 import AppIntegrationInfo from "@/components/Home/AppIntegrationInfo";
 import Link from "next/link";
+import { useState } from "react";
+import Modal from "@/components/Home/Modal";
 
 export default function Home() {
+
+  const [showModal, setShowModal] = useState(false)
+  
   return (
     <div className="flex flex-col gap-y-10 w-full">
 
@@ -34,9 +40,21 @@ export default function Home() {
       <div className="flex gap-y-4 flex-col justify-center items-center">
         <h1 className="text-blueMain text-2xl font-bold text-center w-11/12 italic">Correu? Personalize aqui!</h1>
         <p className="text-blueSecond font-medium text-center w-11/12">You're invited to join the Runkeeper app community and unlock your running potential.</p>
-        <div id="entrar" className="border border-blueMain border-dashed rounded-3xl w-10/12 h-36 flex items-center justify-center mt-2">
+        <button 
+          id="entrar" 
+          className="border border-blueMain border-dashed rounded-3xl w-10/12 h-36 flex items-center justify-center mt-2"
+          onClick={()=> setShowModal(true)}
+
+        >
           <h3 className="text-center text-sm text-blueMain font-semibold italic">Carregue sua atividade clicando aqui!</h3>
-        </div>
+        </button>
+        {showModal && (
+          <>
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+            <Modal key={'modal'} closeModal={setShowModal}/>
+          </>
+        )}
+
       </div>
 
       <div id="diferenciais" className="bg-blueMain flex justify-center items-center p-8">
