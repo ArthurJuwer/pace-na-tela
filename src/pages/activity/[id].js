@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import "./globals.css";
+import "../../pages/globals.css";
 import Image from 'next/image';
 import postInterativos from "../../../public/posts01.svg"
 import postCustomizavel from "../../../public/posts02.svg"
+import Link from 'next/link';
 
 const Activity = () => {
   const router = useRouter();
@@ -13,37 +14,37 @@ const Activity = () => {
   const [error, setError] = useState(null);
   const [selectedPosts, setSelectedPosts] = useState({});
 
-  useEffect(() => {
-    if (id) {
-      const fetchActivity = async () => { 
-        try {
-          const response = await axios.get(`https://www.strava.com/api/v3/activities/${id}`, {
-            headers: {
-              Authorization: `Bearer OCULTADO`, // Use uma variável de ambiente para o token
-              // TROCAR AQUI PELO TOKEN DO .ENV
-            },
-          });
-          setActivity(response.data);
-          console.log('Dados da atividade:', response.data);
+  // useEffect(() => {
+  //   if (id) {
+  //     const fetchActivity = async () => { 
+  //       try {
+  //         const response = await axios.get(`https://www.strava.com/api/v3/activities/${id}`, {
+  //           headers: {
+  //             Authorization: `Bearer OCULTADO`, // Use uma variável de ambiente para o token
+  //             // TROCAR AQUI PELO TOKEN DO .ENV
+  //           },
+  //         });
+  //         setActivity(response.data);
+  //         console.log('Dados da atividade:', response.data);
 
-        } catch (err) {
-          // Melhore o tratamento de erros
-          if (err.response) {
-            setError(err.response.data);
-          } else {
-            setError({ message: 'Erro ao buscar a atividade.' });
-          }
-        }
-      };
+  //       } catch (err) {
+  //         // Melhore o tratamento de erros
+  //         if (err.response) {
+  //           setError(err.response.data);
+  //         } else {
+  //           setError({ message: 'Erro ao buscar a atividade.' });
+  //         }
+  //       }
+  //     };
 
-      fetchActivity(); // Chama a função sem passar o ID fixo
-    }
+  //     fetchActivity(); // Chama a função sem passar o ID fixo
+  //   }
 
-    // AQUI ESTAMOS VERIFICANDO SE TEM ATIVIDADE DEPOIS A PESSOA IRA ESCOLHER QUAL ELA DESEJA E SO IREMOS MANDAR PARA A OUTRA PAGINA
-    // ONDE TEM AS INFORMAÇÔES OU O POST INTERATIVO O OBJETO PARA CONSEGUIR FILTRAR MELHOR ESTA PAGINA VERIFICA SE TEM E CASO
-    // ATUALMENTE SO ESTA FUNCIONANDO AS ATIVIDADES DA MINHA CONTA ARTHUR JUWER
+  //   // AQUI ESTAMOS VERIFICANDO SE TEM ATIVIDADE DEPOIS A PESSOA IRA ESCOLHER QUAL ELA DESEJA E SO IREMOS MANDAR PARA A OUTRA PAGINA
+  //   // ONDE TEM AS INFORMAÇÔES OU O POST INTERATIVO O OBJETO PARA CONSEGUIR FILTRAR MELHOR ESTA PAGINA VERIFICA SE TEM E CASO
+  //   // ATUALMENTE SO ESTA FUNCIONANDO AS ATIVIDADES DA MINHA CONTA ARTHUR JUWER
 
-  }, [id]);
+  // }, [id]);
 
   const handleSelectPost = (postType) => {
     setSelectedPosts((prev) => {
@@ -67,6 +68,8 @@ const Activity = () => {
       entries.sort((a, b) => a[1] - b[1]); // Ordena pelo número (1, 2)
       return Object.fromEntries(entries.map(([key], index) => [key, index + 1])); // Reatribui 1 e 2
     });
+
+    
   };
 
   if (error) return <div>Error: {error.message}</div>;
@@ -154,9 +157,18 @@ const Activity = () => {
         <button className="text-[#1E1E1E] font-semibold italic">
           &lt; voltar
         </button>
-        <button className="bg-blueMain text-white px-10 py-1.5 rounded-2xl" disabled={!selectedPosts.interativo && !selectedPosts.customizavel}>
+        <Link 
+          href={
+              Object.keys(selectedPosts).length > 1 
+              ? '/model/ambos' : 
+            (
+              Object.keys(selectedPosts)[0] === "customizavel" 
+              ? "/model/customizavel" : "/model/interativo"
+            )
+          }
+          className="bg-blueMain text-white px-10 py-1.5 rounded-2xl" disabled={!selectedPosts.interativo && !selectedPosts.customizavel}>
           Avançar
-        </button>
+        </Link>
       </div>
     </div>
     </>

@@ -12,6 +12,10 @@ export default {
         blueSecond: "#1D6BC3",
         blueThird: "#0084FF",
       },
+      fontFamily: {
+        myanmar: ['"Myanmar Khyay"', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
+      },
     },
   },
   plugins: [],
