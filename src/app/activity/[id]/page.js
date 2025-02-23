@@ -1,15 +1,13 @@
+'use client'
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import axios from 'axios';
-import "../../pages/globals.css";
 import Image from 'next/image';
-import postInterativos from "../../../public/posts01.svg"
-import postCustomizavel from "../../../public/posts02.svg"
+import postInterativos from "../../../../public/posts01.svg"
+import postCustomizavel from "../../../../public/posts02.svg"
 import Link from 'next/link';
 
-const Activity = () => {
-  const router = useRouter();
-  const { id } = router.query; // Obtém o ID da atividade da URL
+const Activity = ({params}) => {
+  const { id } = params; 
   const [activity, setActivity] = useState(null);
   const [error, setError] = useState(null);
   const [selectedPosts, setSelectedPosts] = useState({});
@@ -76,20 +74,7 @@ const Activity = () => {
 
   return (
     <>
-    {/* <div>
-      {activity ? (
-        <div>
-          <h1>{activity.name}</h1>
-          <p style={{background: 'red'}}>Tipo de Esporte: {activity.sport_type}</p>
-          <p>Duração: {activity.elapsed_time} segundos</p>
-          <p>Descrição: {activity.description}</p>
-          <p>Distância: {activity.distance} metros</p>
-        </div>
-      ) : (
-        <p>Carregando...</p>
-      )}
-    </div> */}
-    <div className="min-h-screen text-white flex flex-col gap-y-12 items-center p-6">
+    <div className="min-h-screen text-white flex flex-col gap-y-12 items-center p-4 font-inter">
       <div className="bg-[#1E1E1E] text-white py-1.5 px-12 rounded-3xl italic">
         <p className="text-sm font-semibold">Sua atividade foi salva</p>
       </div>
@@ -112,7 +97,7 @@ const Activity = () => {
           <div className='flex flex-col gap-y-4'>
             <Image src={postInterativos} alt='' className='w-full mt-5' />
             <h2 className="font-bold bg-white text-blueMain p-2 text-center rounded-2xl">Post Interativo</h2>
-            <p className="">
+            <p className="text-sm text-center">
               Receba um post humorístico de acordo com as informações da sua
               atividade.
             </p>
@@ -138,7 +123,7 @@ const Activity = () => {
           <div className='flex flex-col gap-y-4'>
             <Image src={postCustomizavel} alt='' className='w-full mt-5' />
             <h2 className="font-bold bg-white text-blueMain p-2 text-center rounded-2xl">Post Customizável</h2>
-            <p className="">
+            <p className="text-sm text-center">
             Escolha entre templates
             famosos de instagram e as 
             informações mais relevantes
@@ -160,10 +145,10 @@ const Activity = () => {
         <Link 
           href={
               Object.keys(selectedPosts).length > 1 
-              ? '/model/ambos' : 
+              ? `/activity/${id}/model/ambos` : 
             (
               Object.keys(selectedPosts)[0] === "customizavel" 
-              ? "/model/customizavel" : "/model/interativo"
+              ? `/activity/${id}/model/customizavel` : `/activity/${id}/model/interativo`
             )
           }
           className="bg-blueMain text-white px-10 py-1.5 rounded-2xl" disabled={!selectedPosts.interativo && !selectedPosts.customizavel}>

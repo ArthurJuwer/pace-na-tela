@@ -28,7 +28,7 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false)
   
   return (
-    <div className="flex flex-col gap-y-10 w-full">
+    <div className="flex flex-col gap-y-10 w-full font-inter">
 
       <header className="flex items-center justify-between p-10 pb-0">
         <Image src={Logo} width={100} height={100} alt="logo pace na tela" />
@@ -39,7 +39,7 @@ export default function Home() {
 
       <div className="flex gap-y-4 flex-col justify-center items-center">
         <h1 className="text-blueMain text-2xl font-bold text-center w-11/12 italic">Correu? Personalize aqui!</h1>
-        <p className="text-blueSecond font-medium text-center w-11/12">You're invited to join the Runkeeper app community and unlock your running potential.</p>
+        <p className="text-blueSecond text-sm font-medium text-center w-9/12">You're invited to join the Runkeeper app community and unlock your running potential.</p>
         <button 
           id="entrar" 
           className="border border-blueMain border-dashed rounded-3xl w-10/12 h-36 flex items-center justify-center mt-2"
@@ -63,19 +63,19 @@ export default function Home() {
 
       <div className="flex gap-y-4 flex-col justify-center items-center">
         <h1 className="text-blueMain text-2xl font-bold text-center w-11/12 italic">Escolha suas informações</h1>
-        <p className="text-blueSecond font-medium text-center w-11/12">Compartilhe informações do seu gosto</p>
+        <p className="text-blueSecond text-sm font-medium text-center w-10/12">Compartilhe informações do seu gosto</p>
       </div>
       <Image src={Informacoes} className="w-full" alt="logo pace na tela" />
 
       <div className="flex gap-y-4 flex-col justify-center items-center">
         <h1 className="text-blueMain text-2xl font-bold text-center w-11/12 italic">Design Personalizável</h1>
-        <p className="text-blueSecond font-medium text-center w-11/12">Deixe sua foto mais profissional e intuitiva</p>
+        <p className="text-blueSecond text-sm font-medium text-center w-10/12">Deixe sua foto mais profissional e intuitiva</p>
       </div>
       <Image src={Templates} className="w-full" alt="logo pace na tela" />
 
       <div className="flex gap-y-4 flex-col justify-center items-center">
         <h1 className="text-blueMain text-2xl font-bold text-center w-11/12 italic">Posts Divertidos</h1>
-        <p className="text-blueSecond font-medium text-center w-11/12">Esqueceu de tirar foto?<br />escolha um card de humor sobre sua corrida</p>
+        <p className="text-blueSecond text-sm font-medium text-center w-10/12">Esqueceu de tirar foto?<br />escolha um card de humor sobre sua corrida</p>
       </div>
       <Image src={PostsDivertidos} className="w-full px-4" alt="logo pace na tela" />
 
