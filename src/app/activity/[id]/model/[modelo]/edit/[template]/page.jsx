@@ -1,9 +1,14 @@
-import Templates from "@/components/Templates";
+'use client'
+
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { Info } from "lucide-react";
 import Image from "next/image";
-import Phone from "../../../../../../../../public/phone.svg";
+import InfoStrava from "../../../../../../../../public/informacoesStrava.svg"; 
+import InfoGarmin from "../../../../../../../../public/informacoesGarmin.svg"; 
 import CheckboxInformacoes from "@/components/CheckboxInformacoes";
 import Link from "next/link";
+import Canvas from "@/components/Canvas";
 
 const checkBoxInformacoes = [
   { nome: "Distância", isSelect: true },
@@ -22,31 +27,35 @@ const checkBoxInformacoes = [
   { nome: "Tempo movimentação", isSelect: true }
 ]
 
-export default function Edit() {
+export default function Edit({ params }) {
+  const { template } = params; // Pegando o parâmetro 'template' da URL
+
+  const [imagemMain, setImagemMain] = useState(null); 
+    console.log(template)
+    useEffect(() => {
+    if (template == 4) {
+        setImagemMain(InfoStrava);
+    } else if(template == 5) {
+        setImagemMain(InfoGarmin);
+    }
+    }, [template]); 
+
   return (
-    <div className="h-dvh flex flex-col items-center justify-center gap-y-12">
+    <div className="min-h-dvh flex flex-col items-center justify-center gap-y-12">
     <h1 className="text-center text-3xl text-blueMain font-bold italic mt-14 w-10/12">Quais Informações deseja mostrar?</h1>
-    <div className="h-[85dvh] flex flex-col ">
-      <div className="flex flex-col gap-y-12 items-center w-full bg-blueMain rounded-3xl px-5 py-8 h-4/5">
+    <div className="flex flex-col w-full ">
+      <div className="flex flex-col gap-y-12 items-center w-full bg-blueMain rounded-3xl px-5 py-8">
         <div className="w-full flex justify-between items-center">
           <h2 className="px-10 py-2 bg-white text-blueMain font-semibold text-center text-sm italic rounded-xl">Posts interativo</h2>
           <Info className="text-white size-8"/>
         </div>
-        <div className="w-full flex justify-between gap-x-5">
-
-          <div className="w-7/12">
-            <Image src={Phone} alt="" className="w-full z-40" />
+        <div className="w-full flex flex-col items-center gap-x-5">
+          <div className="bg-black flex items-center justify-center p-12 rounded-3xl">
+            <Image src={imagemMain} alt="imagem template" className="w-[400px]" />
           </div>
-          <div className="flex flex-col gap-y-5
-          h-96 overflow-y-auto 
-          [&::-webkit-scrollbar]:w-2
-          [&::-webkit-scrollbar-track]:rounded-full
-          [&::-webkit-scrollbar-track]:bg-gray-100
-          [&::-webkit-scrollbar-thumb]:rounded-full
-          [&::-webkit-scrollbar-thumb]:p-2
-          [&::-webkit-scrollbar-thumb]:bg-[#8194BE]
-          dark:[&::-webkit-scrollbar-track]:bg-[#2C3E50]  
-          dark:[&::-webkit-scrollbar-thumb]:bg-[#5A6D8E]">
+         
+          <div className="grid grid-cols-2 place-content-center gap-y-5
+          h-96 ">
             {checkBoxInformacoes.map((item, index)=>(
               <CheckboxInformacoes key={'checkbox ' + index} title={item.nome} isSelect={item.isSelect}/>
             ))}
@@ -59,7 +68,7 @@ export default function Edit() {
         <button className="text-[#1E1E1E] font-semibold italic">
           &lt; voltar
         </button>
-        <Link href={'/'}
+        <Link href={`${template}/pos/${template}`}
           className="bg-blueMain text-white px-10 py-1.5 rounded-2xl">
           Avançar
         </Link>

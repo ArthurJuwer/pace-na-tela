@@ -3,11 +3,17 @@ import PostExample from "../../../../../../public/postTeste.svg";
 import PostLogo from "../../../../../../public/postLogo.svg";
 import PostUser from "../../../../../../public/postUser.svg";
 import ModeloInfo from "../../../../../../public/informacoesStrava.svg";
+import ModeloGarmin from "../../../../../../public/informacoesGarmin.svg";
+
 import Phone from "../../../../../../public/phone.svg";
 import Image from "next/image";
 import { Facebook, Info, Instagram, Search, Upload } from "lucide-react";
 import Link from "next/link";
 import Templates from "@/components/Templates";
+
+const PHONE_WIDTH = 230;
+const PHONE_HEIGHT = 479;
+const PHONE_CONTENT_PADDING = 6;
 
 export default function Modelo({params}) {
 //   const router = useRouter();
@@ -28,7 +34,21 @@ const { modelo } = params;
             <div className="w-full flex flex-col items-center justify-center gap-y-10">
 
               <div className="w-8/12">
-                <Image src={Phone} alt="" className="w-full z-40" />
+              <div className="flex">
+                <div
+                  className="flex-1 p-10 relative overflow-hidden flex items-center justify-center"
+                >
+                  <div className="relative">
+                    <div className="absolute -inset-2.5 bg-black rounded-[30px]" />
+                    <div
+                      className={`w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px] bg-gray-600 relative rounded-[25px] overflow-hidden`}
+                      // TROCAR ESSE BG-WHITE PELA FOTO DA PESSOA
+                    >
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl" />
+                    </div>
+                  </div>
+                </div>
+              </div>
               </div>
               <div className="w-full flex h-12 relative">
                   <input type="text" className="w-full h-full flex bg-white rounded-lg text-sm pl-4 font-semibold placeholder:text-[#BCBCBC]" placeholder="O que você esta procurando?" />
@@ -48,7 +68,7 @@ const { modelo } = params;
                 <h1 className="text-white font-semibold italic ml-1">Informações</h1>
                     <div className="grid grid-cols-2 gap-4">
                     <Templates title='informações Strava' image={ModeloInfo} template={4} />
-                    <Templates title='informações Strava' image={ModeloInfo} template={5} />
+                    <Templates title='informações Garmin' image={ModeloGarmin} template={5} />
                   </div>
 
               </div>
