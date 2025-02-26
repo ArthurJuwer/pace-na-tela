@@ -6,7 +6,7 @@ const PHONE_HEIGHT = 479;
 const PHONE_CONTENT_PADDING = 5;
 // w-[230px] h-[479px]
 
-export default function Canvas({image}) {
+export default function Canvas({image, template}) {
 
   const [shapes, setShapes] = useState([
     {
@@ -15,8 +15,8 @@ export default function Canvas({image}) {
       x: 50,
       y: 50,
       width: 140,
-      height: 75,
-      imageUrl: image.src,
+      height: 80,
+      templateUrl: template.src,
     },
   ]);
   
@@ -132,10 +132,13 @@ export default function Canvas({image}) {
           <div className="absolute -inset-2.5 bg-black rounded-[30px]" />
           <div
             ref={phoneRef}
-            className={`w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px] bg-gray-600 relative rounded-[25px] overflow-hidden`}
+            className={`w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px] ${image ? `bg-cover bg-center` : 'bg-gray-600'} relative rounded-[25px] overflow-hidden flex items-center justify-center`}
             onMouseMove={handleMouseMove}
             onMouseUp={handleDragEnd}
-            // TROCAR ESSE BG-WHITE PELA FOTO DA PESSOA
+            style={{ backgroundImage: image ? `url(${image})` : 'none' }}
+                      
+            // FAZER COM QUE CASO A IMAGEM SEJA FALSA VOLTAR PARA PAGINA ONDE COLOCA IMAGEM 
+
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl" />
             {shapes.map(shape => (
@@ -152,7 +155,7 @@ export default function Canvas({image}) {
                 onClick={(e) => handleShapeClick(e, shape.id)}
                 onMouseDown={(e) => handleDragStart(e, shape.id)}
               >
-                <img src={shape.imageUrl} alt="User added" className="w-full h-full object-cover " draggable="false"/>
+                <img src={shape.templateUrl} alt="User added" className="w-full h-full object-cover " draggable="false"/>
                 {selectedShape === shape.id && (
                   <div
                     className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 cursor-se-resize"

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 import { Info } from "lucide-react";
 import Image from "next/image";
 import InfoStrava from "../../../../../../../../public/informacoesStrava.svg"; 

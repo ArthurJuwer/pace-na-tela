@@ -10,8 +10,12 @@ import InfoGarmin from "../../../../../../../../../../public/informacoesGarmin.s
 import CheckboxInformacoes from "@/components/CheckboxInformacoes";
 import Link from "next/link";
 import Canvas from "@/components/Canvas";
+import { useImageContext } from '@/context/ImageContext'; // Importa o hook do contexto
+
 
 export default function Posicao({ params }) {
+  const { imageUrl } = useImageContext(); // Acessa o valor da imagem do contexto
+
   const { posicao } = params; 
   const [imagemMain, setImagemMain] = useState(null); 
   console.log(posicao)
@@ -32,7 +36,7 @@ export default function Posicao({ params }) {
           <Info className="text-white size-8"/>
         </div>
         <div className="w-full flex flex-col items-center gap-x-5">
-        {imagemMain && <Canvas image={imagemMain} />}
+        {imagemMain && <Canvas template={imagemMain} image={imageUrl} />}
         </div>
         
         

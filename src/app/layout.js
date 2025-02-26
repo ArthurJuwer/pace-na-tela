@@ -1,4 +1,5 @@
 import "./globals.css";
+import { ImageProvider } from '@/context/ImageContext'; // Importa o ImageProvider
 
 export const metadata = {
   title: "Create Next App",
@@ -7,9 +8,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-br">
+    <html lang="pt-BR">
       <body>
-        {children}
+        <ImageProvider> {/* Envolvendo a aplicação com o ImageProvider */}
+          {children}
+        </ImageProvider>
       </body>
     </html>
   );

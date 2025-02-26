@@ -1,4 +1,7 @@
-// import { useRouter } from "next/router";
+'use client';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { useImageContext } from '@/context/ImageContext'; // Importa o hook do contexto
 import PostExample from "../../../../../../public/postTeste.svg";
 import PostLogo from "../../../../../../public/postLogo.svg";
 import PostUser from "../../../../../../public/postUser.svg";
@@ -15,81 +18,186 @@ const PHONE_WIDTH = 230;
 const PHONE_HEIGHT = 479;
 const PHONE_CONTENT_PADDING = 6;
 
-export default function Modelo({params}) {
-//   const router = useRouter();
-//   const { modelo } = router.query;
-const { modelo } = params;
+export default function Modelo({ params }) {
+  const { modelo } = params;
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { imageUrl, setImageUrl } = useImageContext(); // Usando o contexto para obter e atualizar a URL da imagem
+
+  // Estados para controle do zoom e posição da imagem
+  const [zoom, setZoom] = useState(1); // Zoom inicial
+  const [position, setPosition] = useState({ x: 0, y: 0 }); // Posição da imagem
+  const [isDragging, setIsDragging] = useState(false); // Para controlar o arraste
+  const [startTouch, setStartTouch] = useState(null); // Para controle do toque
+
+  const imageRef = useRef(null); // Referência para a imagem
+
+  // Função para impedir o scroll da página
+  const disableScroll = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  useEffect(() => {
+    // Adiciona o evento de desabilitar scroll
+    if (isDragging) {
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('touchmove', disableScroll, { passive: false });
+    } else {
+      document.body.style.overflow = 'auto';
+      document.removeEventListener('touchmove', disableScroll);
+    }
+
+    return () => {
+      document.removeEventListener('touchmove', disableScroll);
+      document.body.style.overflow = 'auto';
+    };
+  }, [isDragging]);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const handleUrlSubmit = () => {
+    console.log("URL da imagem:", imageUrl); // Verificando se a URL foi atualizada corretamente
+    closeModal();
+  };
+
+  // Função para lidar com o gesto de toque para mover a imagem
+  const handleTouchStart = (e) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setStartTouch({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+    } else if (e.touches.length === 2) {
+      // Detecta o gesto de pinça para zoom
+      const distance = getDistance(e.touches);
+      setZoom((prevZoom) => prevZoom * (distance / 200)); // Ajusta o zoom com base na distância
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (isDragging && e.touches.length === 1) {
+      // Mover a imagem com o toque
+      const dx = e.touches[0].clientX - startTouch.x;
+      const dy = e.touches[0].clientY - startTouch.y;
+      setPosition((prevPos) => ({
+        x: prevPos.x + dx,
+        y: prevPos.y + dy,
+      }));
+      setStartTouch({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+    } else if (e.touches.length === 2) {
+      // Detecta o gesto de pinça para zoom
+      const distance = getDistance(e.touches);
+      setZoom((prevZoom) => prevZoom * (distance / 200)); // Ajusta o zoom com base na distância
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  const getDistance = (touches) => {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
 
   return (
     <div className="font-inter">
-    {
-    (modelo === 'customizavel' || modelo === 'ambos') && 
+      {
+        (modelo === 'customizavel' || modelo === 'ambos') &&
         <div className="flex flex-col items-center justify-center gap-y-6">
           <h1 className="text-center text-3xl text-blueMain font-bold italic mt-14 w-10/12">Escolha um template para customizar </h1>
           <div className="flex flex-col gap-y-12 items-center w-full bg-blueMain rounded-3xl px-5 py-8">
             <div className="w-full flex justify-between items-center">
               <h2 className="px-10 py-2 bg-white text-blueMain font-semibold text-center text-sm italic rounded-xl">Posts interativo</h2>
-              <Info className="text-white size-8"/>
+              <Info className="text-white size-8" />
             </div>
             <div className="w-full flex flex-col items-center justify-center gap-y-10">
-
               <div className="w-8/12">
-              <div className="flex">
-                <div
-                  className="flex-1 p-10 relative overflow-hidden flex items-center justify-center"
-                >
-                  <div className="relative">
-                    <div className="absolute -inset-2.5 bg-black rounded-[30px]" />
-                    <div
-                      className={`w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px] bg-gray-600 relative rounded-[25px] overflow-hidden`}
-                      // TROCAR ESSE BG-WHITE PELA FOTO DA PESSOA
-                    >
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl" />
+                <div className="flex">
+                  <div
+                    className="flex-1 p-10 relative overflow-hidden flex items-center justify-center"
+                  >
+                    <div className="relative">
+                      <div className="absolute -inset-2.5 bg-black rounded-[30px]" />
+                      <div
+                        className={`w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} rounded-[25px] overflow-hidden flex items-center justify-center`}
+                        style={{
+                          backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundColor: 'black',
+                          transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`, // Aplica o zoom e o movimento da imagem
+                        }}
+                        ref={imageRef}
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                      >
+                        <button
+                          className={`${imageUrl ? "hidden" : ""} bg-white p-3 rounded-full`}
+                          onClick={openModal}
+                        >
+                          Carregar Imagem
+                        </button>
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl" />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              </div>
+
               <div className="w-full flex h-12 relative">
-                  <input type="text" className="w-full h-full flex bg-white rounded-lg text-sm pl-4 font-semibold placeholder:text-[#BCBCBC]" placeholder="O que você esta procurando?" />
-                  <Search className="absolute transform -translate-y-1/2 top-1/2 right-4 text-[#1E1E1E]" />
+                <input type="text" className="w-full h-full flex bg-white rounded-lg text-sm pl-4 font-semibold placeholder:text-[#BCBCBC]" placeholder="O que você esta procurando?" />
+                <Search className="absolute transform -translate-y-1/2 top-1/2 right-4 text-[#1E1E1E]" />
               </div>
+
               <div className="flex flex-col gap-y-4 justify-start items-start w-full">
-
-                <h1 className="text-white font-semibold italic ml-1">Strava</h1>
-                {/* COLOCAR SCROLL BAR AQUI */}
-                <div className="grid grid-cols-2 gap-4">
-                  <Templates title='Informações Strava' image={ModeloInfo} template={1} />
-                  <Templates title='Mapa Strava' image={ModeloInfo} template={2} />
-                  <Templates title='Troféus Strava' image={ModeloInfo} template={3} />
-                  
-                </div>
-
                 <h1 className="text-white font-semibold italic ml-1">Informações</h1>
-                    <div className="grid grid-cols-2 gap-4">
-                    <Templates title='informações Strava' image={ModeloInfo} template={4} />
-                    <Templates title='informações Garmin' image={ModeloGarmin} template={5} />
-                  </div>
-
+                <div className="grid grid-cols-2 gap-4">
+                  <Templates title='informações Strava' image={ModeloInfo} template={4} />
+                  <Templates title='informações Garmin' image={ModeloGarmin} template={5} />
+                </div>
               </div>
-              
-
             </div>
- 
+
           </div>
           <div className="flex items-center justify-between w-full mt-6 px-4">
             <button className="text-[#1E1E1E] font-semibold italic">
-            &lt; voltar
+              &lt; voltar
             </button>
             <button
-            className="bg-blueMain text-white px-10 py-1.5 rounded-2xl">
-            Avançar
+              className="bg-blueMain text-white px-10 py-1.5 rounded-2xl">
+              Avançar
             </button>
-            {/* ONCLICK PARA MUDAR A PARTE DOS TEMPLATES E APARECER OS DE COMPARTILHAR */}
+          </div>
         </div>
+      }
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white rounded-xl p-6 w-80">
+            <h2 className="text-xl font-semibold mb-4">Digite o URL da imagem</h2>
+            <input
+              type="text"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)} // Usando o setImageUrl do contexto
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              placeholder="URL da imagem"
+            />
+            <div className="flex justify-end gap-4 mt-4">
+              <button onClick={closeModal} className="text-gray-500">Cancelar</button>
+              <button
+                onClick={handleUrlSubmit}
+                className="bg-blueMain text-white px-4 py-2 rounded-lg"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
         </div>
-    }
-    {
+      )}
+      {
     (modelo === 'interativo' || modelo === 'ambos') &&
         <div className="flex flex-col items-center justify-center gap-y-6">
           <h1 className="text-center text-3xl text-blueMain font-bold italic mt-14 w-10/12">Compartilhe o modelo que deseja!</h1>
