@@ -19,20 +19,20 @@ const PHONE_HEIGHT = 479;
 const PHONE_CONTENT_PADDING = 6;
 
 export default function Modelo({ params }) {
-  const { modelo } = params;
+  const { modelo } = React.use(params);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { imageUrl, setImageUrl } = useImageContext(); // Usando o contexto para obter e atualizar a URL da imagem
+  const { imageUrl, setImageUrl } = useImageContext(); 
 
-  // Estados para controle do zoom e posição da imagem
-  const [zoom, setZoom] = useState(1); // Zoom inicial
-  const [position, setPosition] = useState({ x: 0, y: 0 }); // Posição da imagem
-  const [isDragging, setIsDragging] = useState(false); // Para controlar o arraste
-  const [startTouch, setStartTouch] = useState(null); // Para controle do toque
+  // TENHO QUE EXPORTAR O CELULAR DIV COM A IMAGEM E NAO SOMENTE A IMAGEM
 
-  const imageRef = useRef(null); // Referência para a imagem
+  const [zoom, setZoom] = useState(1); 
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false); 
+  const [startTouch, setStartTouch] = useState(null);
 
-  // Função para impedir o scroll da página
+  const imageRef = useRef(null); 
+
   const disableScroll = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -116,35 +116,39 @@ export default function Modelo({ params }) {
               <div className="w-8/12">
                 <div className="flex">
                   <div
-                    className="flex-1 p-10 relative overflow-hidden flex items-center justify-center"
+                    className="relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600"
                   >
-                    <div className="relative">
-                      <div className="absolute -inset-2.5 bg-black rounded-[30px]" />
+                    {/* CASO A PESSOA COLOQUE A FOTO FORA DA TELA ELA PODE ESCOLHER A COR QUE DESEJA (ATUAL BG_GRAY_600) */}
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl z-50" />
+
+                      
                       <div
-                        className={`w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} rounded-[25px] overflow-hidden flex items-center justify-center`}
-                        style={{
-                          backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          backgroundColor: 'black',
-                          transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`, // Aplica o zoom e o movimento da imagem
-                        }}
-                        ref={imageRef}
+                        className={`w-[${PHONE_WIDTH}px]  h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
+                        // style={{
+                        //   backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
+                        //   backgroundSize: 'cover',
+                        //   backgroundPosition: 'center',
+                        //   transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`, // Aplica o zoom e o movimento da imagem
+                        // }}
+                        // ref={imageRef}
+                        // onTouchStart={handleTouchStart}
+                        // onTouchMove={handleTouchMove}
+                        // onTouchEnd={handleTouchEnd}
+                      >
+                        <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="" ref={imageRef} style={{transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`}}
                         onTouchStart={handleTouchStart}
                         onTouchMove={handleTouchMove}
-                        onTouchEnd={handleTouchEnd}
-                      >
+                        onTouchEnd={handleTouchEnd}/>
                         <button
                           className={`${imageUrl ? "hidden" : ""} bg-white p-3 rounded-full`}
                           onClick={openModal}
                         >
                           Carregar Imagem
                         </button>
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl" />
                       </div>
                     </div>
                   </div>
-                </div>
+                        
               </div>
 
               <div className="w-full flex h-12 relative">
@@ -157,6 +161,8 @@ export default function Modelo({ params }) {
                 <div className="grid grid-cols-2 gap-4">
                   <Templates title='informações Strava' image={ModeloInfo} template={4} />
                   <Templates title='informações Garmin' image={ModeloGarmin} template={5} />
+
+
                 </div>
               </div>
             </div>

@@ -7,7 +7,7 @@ import postCustomizavel from "../../../../public/posts02.svg"
 import Link from 'next/link';
 
 const Activity = ({params}) => {
-  const { id } = params; 
+  const { id } = React.use(params); 
   const [activity, setActivity] = useState(null);
   const [error, setError] = useState(null);
   const [selectedPosts, setSelectedPosts] = useState({});
