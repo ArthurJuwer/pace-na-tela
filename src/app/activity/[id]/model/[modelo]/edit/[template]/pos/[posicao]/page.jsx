@@ -14,12 +14,12 @@ import { useImage } from '@/context/ImageContext'; // Importa o hook do contexto
 
 
 export default function Posicao({ params }) {
-  const { posicao } = React.use(params); 
-  const { imageUrl, zoom, position} = useImage();
+  const { id, posicao } = React.use(params); 
+  const { imageUrl, zoom, position, shapes, updateShapes} = useImage();
+  // ADICIONAR
 
 
   const [imagemMain, setImagemMain] = useState(null); 
-  console.log(posicao)
   useEffect(() => {
     if (posicao == 4) {
       setImagemMain(InfoStrava);
@@ -27,6 +27,7 @@ export default function Posicao({ params }) {
       setImagemMain(InfoGarmin);
     }
   }, [posicao]); 
+  
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center gap-y-12">
     <h1 className="text-center text-3xl text-blueMain font-bold italic mt-14 w-10/12">Quais Informações deseja mostrar?</h1>
@@ -37,7 +38,7 @@ export default function Posicao({ params }) {
           <Info className="text-white size-8"/>
         </div>
         <div className="w-full flex flex-col items-center gap-x-5">
-        {imagemMain && <Canvas template={imagemMain} position={position} zoom={zoom} imageUrl={imageUrl} />}
+        {imagemMain && <Canvas template={imagemMain} position={position} zoom={zoom} imageUrl={imageUrl} shapes={shapes} updateShapes={updateShapes} />}
         </div>
         
         
@@ -46,7 +47,7 @@ export default function Posicao({ params }) {
         <button className="text-[#1E1E1E] font-semibold italic">
           &lt; voltar
         </button>
-        <Link href={'/'}
+        <Link href={`/activity/${id}/model/customizavel`}
           className="bg-blueMain text-white px-10 py-1.5 rounded-2xl">
           Avançar
         </Link>

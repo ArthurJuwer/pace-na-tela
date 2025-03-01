@@ -11,9 +11,10 @@ import { useImage } from "@/context/ImageContext";
 
 export default function FinalizadoPage({ params }) {
   const { modelo } = React.use(params); // Next.js automaticamente fornece os parâmetros
-  const { imageUrl, zoom, position} = useImage();
+  const { imageUrl, zoom, position, shapes} = useImage();
   const PHONE_WIDTH = 230;
   const PHONE_HEIGHT = 479;
+  const shapesArray = Array.isArray(shapes) ? shapes : [];
 
   return (
     <div>
@@ -28,19 +29,44 @@ export default function FinalizadoPage({ params }) {
           <div className="flex flex-col gap-y-8 items-center justify-center w-full">
             
           <div className="w-8/12">
-      <div className="flex">
-        <div className={`relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600 w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px]`}>
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl z-50" />
+                          <div className="flex">
+                            <div
+                              className={`relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600 w-full h-[479px]`}
+                              // ERA PARA SER PHONE_HEIGHT
+                            >
+                              {/* CASO A PESSOA COLOQUE A FOTO FORA DA TELA ELA PODE ESCOLHER A COR QUE DESEJA (ATUAL BG_GRAY_600) */}
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl z-50" />
           
-          <div
-            className={`w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
-            
-          >
-            <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="imagem de dentro do celular" style={{ transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)` }} />
-          </div>
-        </div>
-      </div>
-    </div>
+                                
+                                <div
+                                  className={`w-[${PHONE_WIDTH}px]  h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
+                                >
+                                  <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="" style={{transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`}} />
+                                  
+                                  {shapesArray.map(shape => (
+                                <div
+                                  key={shape.id}
+                                  style={{
+                                    position: 'absolute',
+                                    left: shape.x,
+                                    top: shape.y,
+                                    width: shape.width,
+                                    height: shape.height,
+                                  }}
+                                  className={`cursor-pointer`}
+                                >
+                                  <img
+                                    src={shape.templateUrl}
+                                    alt="User added"
+                                    className="w-full h-full object-cover"
+                                    draggable="false"
+                                  />
+                                </div>
+                              ))}
+                                </div>
+                              </div>
+                            </div>    
+                        </div>
             <div className="flex gap-5 items-center justify-center">
               <div className="size-2.5 rounded-full bg-white"></div>
               <div className="size-2.5 rounded-full bg-[#013E9D]"></div>

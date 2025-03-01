@@ -2,12 +2,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 
-export default function Canvas({ imageUrl, position, zoom, template }) {
+export default function Canvas({ imageUrl, position, zoom, template, shapes: initialShapes, updateShapes }) {
 
+  // PRECISO PASSAR O SHAPES POR PARAMETRO PARA RECBER LA
   const PHONE_WIDTH = 230;
   const PHONE_HEIGHT = 479;
 
-  const [shapes, setShapes] = useState([
+  const [shapes, setShapes] = useState(Array.isArray(initialShapes) ? initialShapes : [
     {
       id: '1',
       type: 'image',
@@ -18,13 +19,29 @@ export default function Canvas({ imageUrl, position, zoom, template }) {
       templateUrl: template.src,
     },
   ]);
+  
+
+  useEffect(() => {
+    if (initialShapes && initialShapes.length > 0) {
+      setShapes(initialShapes);
+    }
+  }, [initialShapes]);
+  useEffect(() => {
+    updateShapes(shapes);
+  }, [shapes, updateShapes]);
+  
+
+  const addShape = (newShape) => {
+    const updatedShapes = [...shapes, newShape];
+    setShapes(updatedShapes);
+    updateShapes(updatedShapes); // Se você quiser propagar as mudanças para o componente pai
+  };
 
   const [selectedShape, setSelectedShape] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, offsetX: 0, offsetY: 0 });
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  const canvasRef = useRef(null);
   const phoneRef = useRef(null);
 
   const handleShapeClick = (e, shapeId) => {

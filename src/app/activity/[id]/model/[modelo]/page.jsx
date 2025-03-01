@@ -26,8 +26,7 @@ export default function Modelo({ params }) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   // const { imageUrl, setImageUrl } = useImageContext(); 
-  const { imageUrl, zoom, position, updateImage, updateZoom, updatePosition } = useImage();
-
+  const { imageUrl, zoom, position, shapes, updateImage, updateZoom, updatePosition } = useImage();
   // TENHO QUE EXPORTAR O CELULAR DIV COM A IMAGEM E NAO SOMENTE A IMAGEM
 
   // const [zoom, setZoom] = useState(1); 
@@ -104,6 +103,7 @@ export default function Modelo({ params }) {
     const dy = touches[0].clientY - touches[1].clientY;
     return Math.sqrt(dx * dx + dy * dy);
   };
+  const shapesArray = Array.isArray(shapes) ? shapes : [];
 
   return (
     <div className="font-inter">
@@ -120,7 +120,8 @@ export default function Modelo({ params }) {
               <div className="w-8/12">
                 <div className="flex">
                   <div
-                    className={`relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600 w-full h-[${PHONE_HEIGHT}px]`}
+                    className={`relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600 w-full h-[479px]`}
+                    // ERA PARA SER PHONE_HEIGHT
                   >
                     {/* CASO A PESSOA COLOQUE A FOTO FORA DA TELA ELA PODE ESCOLHER A COR QUE DESEJA (ATUAL BG_GRAY_600) */}
                       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl z-50" />
@@ -139,6 +140,26 @@ export default function Modelo({ params }) {
                         >
                           Carregar Imagem
                         </button>
+                        {shapesArray.map(shape => (
+                      <div
+                        key={shape.id}
+                        style={{
+                          position: 'absolute',
+                          left: shape.x,
+                          top: shape.y,
+                          width: shape.width,
+                          height: shape.height,
+                        }}
+                        className={`cursor-pointer`}
+                      >
+                        <img
+                          src={shape.templateUrl}
+                          alt="User added"
+                          className="w-full h-full object-cover"
+                          draggable="false"
+                        />
+                      </div>
+                    ))}
                       </div>
                     </div>
                   </div>
