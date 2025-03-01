@@ -1,11 +1,12 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react';
 
-const PHONE_WIDTH = 230;
-const PHONE_HEIGHT = 479;
-const PHONE_CONTENT_PADDING = 5;
 
 export default function Canvas({ imageUrl, position, zoom, template }) {
+
+  const PHONE_WIDTH = 230;
+  const PHONE_HEIGHT = 479;
+
   const [shapes, setShapes] = useState([
     {
       id: '1',
@@ -167,43 +168,45 @@ export default function Canvas({ imageUrl, position, zoom, template }) {
   }, [selectedShape]);
 
   return (
-    <div className="flex">
-      <div className="relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl z-50" />
-        
-        <div
-          className={`w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
-          ref={phoneRef}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd} // Finaliza o movimento ou redimensionamento
-          onTouchCancel={handleTouchEnd} // Caso o toque seja cancelado
-        >
-          <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="imagem de dentro do celular" style={{ transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)` }} />
+    <div className="w-8/12">
+      <div className="flex">
+        <div className={`relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600 w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px]`}>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl z-50" />
           
-          {shapes.map(shape => (
-            <div
-              key={shape.id}
-              style={{
-                position: 'absolute',
-                left: shape.x,
-                top: shape.y,
-                width: shape.width,
-                height: shape.height,
-                zIndex: selectedShape === shape.id ? 10 : 1, // Garantir que o item selecionado esteja em cima
-              }}
-              className={`border-2 cursor-pointer ${selectedShape === shape.id ? 'border-blue-500' : 'border-transparent'}`}
-              onClick={(e) => handleShapeClick(e, shape.id)}
-              onTouchStart={(e) => handleDragStart(e, shape.id)} // Começar a movimentação ou redimensionamento
-            >
-              <img src={shape.templateUrl} alt="User added" className="w-full h-full object-cover" draggable="false" />
-              {selectedShape === shape.id && (
-                <div
-                  className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 cursor-se-resize"
-                  onTouchStart={(e) => handleResizeStart(e, shape.id)} // Começar redimensionamento
-                />
-              )}
-            </div>
-          ))}
+          <div
+            className={`w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
+            ref={phoneRef}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd} // Finaliza o movimento ou redimensionamento
+            onTouchCancel={handleTouchEnd} // Caso o toque seja cancelado
+          >
+            <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="imagem de dentro do celular" style={{ transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)` }} />
+            
+            {shapes.map(shape => (
+              <div
+                key={shape.id}
+                style={{
+                  position: 'absolute',
+                  left: shape.x,
+                  top: shape.y,
+                  width: shape.width,
+                  height: shape.height,
+                  zIndex: selectedShape === shape.id ? 10 : 1, // Garantir que o item selecionado esteja em cima
+                }}
+                className={`border-2 cursor-pointer ${selectedShape === shape.id ? 'border-blue-500' : 'border-transparent'}`}
+                onClick={(e) => handleShapeClick(e, shape.id)}
+                onTouchStart={(e) => handleDragStart(e, shape.id)} // Começar a movimentação ou redimensionamento
+              >
+                <img src={shape.templateUrl} alt="User added" className="w-full h-full object-cover" draggable="false" />
+                {selectedShape === shape.id && (
+                  <div
+                    className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 cursor-se-resize"
+                    onTouchStart={(e) => handleResizeStart(e, shape.id)} // Começar redimensionamento
+                  />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
