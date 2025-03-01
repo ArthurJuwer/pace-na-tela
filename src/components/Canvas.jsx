@@ -4,10 +4,8 @@ import React, { useState, useRef, useEffect } from 'react';
 const PHONE_WIDTH = 230;
 const PHONE_HEIGHT = 479;
 const PHONE_CONTENT_PADDING = 5;
-// w-[230px] h-[479px]
 
-export default function Canvas({image, template}) {
-
+export default function Canvas({ imageUrl, position, zoom, template }) {
   const [shapes, setShapes] = useState([
     {
       id: '1',
@@ -19,13 +17,12 @@ export default function Canvas({image, template}) {
       templateUrl: template.src,
     },
   ]);
-  
 
   const [selectedShape, setSelectedShape] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, offsetX: 0, offsetY: 0 });
-  const [resizeHandle, setResizeHandle] = useState(null);
+  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const canvasRef = useRef(null);
   const phoneRef = useRef(null);
 
@@ -36,73 +33,120 @@ export default function Canvas({image, template}) {
 
   const handleDragStart = (e, shapeId) => {
     e.stopPropagation();
+
+    // Usar o primeiro toque
+    const touch = e.touches[0];
     const shape = shapes.find(s => s.id === shapeId);
     if (!shape) return;
 
     const phoneRect = phoneRef.current?.getBoundingClientRect();
     if (!phoneRect) return;
 
-    const offsetX = e.clientX - (phoneRect.left + shape.x);
-    const offsetY = e.clientY - (phoneRect.top + shape.y);
+    const offsetX = touch.clientX - (phoneRect.left + shape.x);
+    const offsetY = touch.clientY - (phoneRect.top + shape.y);
 
     setIsDragging(true);
     setSelectedShape(shapeId);
-    setDragStart({ x: e.clientX, y: e.clientY, offsetX, offsetY });
+    setDragStart({ x: touch.clientX, y: touch.clientY, offsetX, offsetY });
   };
 
   const handleDragEnd = () => {
     setIsDragging(false);
-    setIsResizing(false);
   };
-
-  const handleMouseMove = (e) => {
-    if (!selectedShape || (!isDragging && !isResizing)) return;
-    const phoneRect = phoneRef.current?.getBoundingClientRect();
-    if (!phoneRect) return;
-  
-    setShapes(shapes.map(shape => {
-      if (shape.id === selectedShape) {
-        if (isDragging) {
-          const deltaX = e.clientX - dragStart.x;
-          const deltaY = e.clientY - dragStart.y;
-          let newX = shape.x + deltaX;
-          let newY = shape.y + deltaY;
-  
-          newX = Math.max(PHONE_CONTENT_PADDING, Math.min(PHONE_WIDTH - shape.width - PHONE_CONTENT_PADDING, newX));
-          newY = Math.max(PHONE_CONTENT_PADDING, Math.min(PHONE_HEIGHT - shape.height - PHONE_CONTENT_PADDING, newY));
-  
-          setDragStart({ ...dragStart, x: e.clientX, y: e.clientY });
-          return { ...shape, x: newX, y: newY };
-        } else if (isResizing) {
-          const deltaX = e.clientX - dragStart.x;
-          const deltaY = e.clientY - dragStart.y;
-  
-          // Lógica de redimensionamento proporcional
-          let newWidth = Math.max(20, shape.width + deltaX);
-          let newHeight = Math.max(20, shape.height + deltaY);
-  
-          // Se você deseja manter a proporção
-          const aspectRatio = shape.width / shape.height;
-          if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            newHeight = newWidth / aspectRatio;
-          } else {
-            newWidth = newHeight * aspectRatio;
-          }
-  
-          setDragStart({ x: e.clientX, y: e.clientY });
-          return { ...shape, width: newWidth, height: newHeight };
-        }
-      }
-      return shape;
-    }));
-  };
-  
 
   const handleResizeStart = (e, shapeId) => {
     e.stopPropagation();
+  
+    const touch = e.touches[0];
+    const shape = shapes.find(s => s.id === shapeId);
+    if (!shape) return;
+  
+    const phoneRect = phoneRef.current?.getBoundingClientRect();
+    if (!phoneRect) return;
+  
+    const offsetX = touch.clientX - phoneRect.left;
+    const offsetY = touch.clientY - phoneRect.top;
+  
     setIsResizing(true);
     setSelectedShape(shapeId);
-    setDragStart({ x: e.clientX, y: e.clientY });
+    setResizeStart({
+      x: touch.clientX,
+      y: touch.clientY,
+      width: shape.width,
+      height: shape.height,
+    });
+  };
+  
+
+  const handleTouchMove = (e) => {
+    if (!selectedShape || (!isDragging && !isResizing)) return;
+  
+    const phoneRect = phoneRef.current?.getBoundingClientRect();
+    if (!phoneRect) return;
+  
+    const touch = e.touches[0];
+  
+    if (isDragging) {
+      const deltaX = touch.clientX - dragStart.x;
+      const deltaY = touch.clientY - dragStart.y;
+  
+      setShapes(shapes.map(shape => {
+        if (shape.id === selectedShape) {
+          let newX = shape.x + deltaX;
+          let newY = shape.y + deltaY;
+  
+          // Remover a limitação para permitir que a forma ultrapasse os limites
+          newX = newX;
+          newY = newY;
+  
+          return { ...shape, x: newX, y: newY };
+        }
+        return shape;
+      }));
+  
+      setDragStart({ x: touch.clientX, y: touch.clientY });
+    } else if (isResizing) {
+      const deltaX = touch.clientX - resizeStart.x;
+      const deltaY = touch.clientY - resizeStart.y;
+  
+      const widthChange = deltaX;
+      const heightChange = deltaY;
+  
+      const aspectRatio = resizeStart.width / resizeStart.height;
+      
+      let newWidth = resizeStart.width + widthChange;
+      let newHeight = resizeStart.height + heightChange;
+  
+      if (Math.abs(widthChange) > Math.abs(heightChange)) {
+        newHeight = newWidth / aspectRatio;
+      } else {
+        newWidth = newHeight * aspectRatio;
+      }
+  
+      newWidth = newWidth;
+      newHeight = newHeight;
+  
+      setShapes(shapes.map(shape => {
+        if (shape.id === selectedShape) {
+          return { ...shape, width: newWidth, height: newHeight };
+        }
+        return shape;
+      }));
+  
+      setResizeStart({
+        x: touch.clientX,
+        y: touch.clientY,
+        width: newWidth,
+        height: newHeight,
+      });
+    }
+  };
+  
+  
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    setIsResizing(false);
   };
 
   const handleDelete = () => {
@@ -124,47 +168,42 @@ export default function Canvas({image, template}) {
 
   return (
     <div className="flex">
-      <div
-        ref={canvasRef}
-        className="flex-1 p-10 relative overflow-hidden flex items-center justify-center"
-      >
-        <div className="relative">
-          <div className="absolute -inset-2.5 bg-black rounded-[30px]" />
-          <div
-            ref={phoneRef}
-            className={`w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px] ${image ? `bg-cover bg-center` : 'bg-gray-600'} relative rounded-[25px] overflow-hidden flex items-center justify-center`}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleDragEnd}
-            style={{ backgroundImage: image ? `url(${image})` : 'none' }}
-                      
-            // FAZER COM QUE CASO A IMAGEM SEJA FALSA VOLTAR PARA PAGINA ONDE COLOCA IMAGEM 
-
-          >
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl" />
-            {shapes.map(shape => (
-              <div
-                key={shape.id}
-                style={{
-                  position: 'absolute',
-                  left: shape.x,
-                  top: shape.y,
-                  width: shape.width,
-                  height: shape.height,
-                }}
-                className={`border-2 cursor-move ${selectedShape === shape.id ? 'border-blue-500' : 'border-transparent'}`}
-                onClick={(e) => handleShapeClick(e, shape.id)}
-                onMouseDown={(e) => handleDragStart(e, shape.id)}
-              >
-                <img src={shape.templateUrl} alt="User added" className="w-full h-full object-cover " draggable="false"/>
-                {selectedShape === shape.id && (
-                  <div
-                    className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 cursor-se-resize"
-                    onMouseDown={(e) => handleResizeStart(e, shape.id)}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
+      <div className="relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl z-50" />
+        
+        <div
+          className={`w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
+          ref={phoneRef}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd} // Finaliza o movimento ou redimensionamento
+          onTouchCancel={handleTouchEnd} // Caso o toque seja cancelado
+        >
+          <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="imagem de dentro do celular" style={{ transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)` }} />
+          
+          {shapes.map(shape => (
+            <div
+              key={shape.id}
+              style={{
+                position: 'absolute',
+                left: shape.x,
+                top: shape.y,
+                width: shape.width,
+                height: shape.height,
+                zIndex: selectedShape === shape.id ? 10 : 1, // Garantir que o item selecionado esteja em cima
+              }}
+              className={`border-2 cursor-pointer ${selectedShape === shape.id ? 'border-blue-500' : 'border-transparent'}`}
+              onClick={(e) => handleShapeClick(e, shape.id)}
+              onTouchStart={(e) => handleDragStart(e, shape.id)} // Começar a movimentação ou redimensionamento
+            >
+              <img src={shape.templateUrl} alt="User added" className="w-full h-full object-cover" draggable="false" />
+              {selectedShape === shape.id && (
+                <div
+                  className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 cursor-se-resize"
+                  onTouchStart={(e) => handleResizeStart(e, shape.id)} // Começar redimensionamento
+                />
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>

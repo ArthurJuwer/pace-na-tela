@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Info } from "lucide-react";
 import Image from "next/image";
 import InfoStrava from "../../../../../../../../public/informacoesStrava.svg"; 
@@ -27,10 +27,9 @@ const checkBoxInformacoes = [
 ]
 
 export default function Edit({ params }) {
-  const { template } = params; // Pegando o parâmetro 'template' da URL
+  const { template } = React.use(params); 
 
   const [imagemMain, setImagemMain] = useState(null); 
-    console.log(template)
     useEffect(() => {
     if (template == 4) {
         setImagemMain(InfoStrava);
@@ -50,7 +49,7 @@ export default function Edit({ params }) {
         </div>
         <div className="w-full flex flex-col items-center gap-x-5">
           <div className="bg-black flex items-center justify-center p-12 rounded-3xl">
-            <Image src={imagemMain} alt="imagem template" className="w-[400px]" />
+            { imagemMain && ( <Image src={imagemMain} alt="imagem template" className="w-[400px] h-auto" /> )}
           </div>
          
           <div className="grid grid-cols-2 place-content-center gap-y-5

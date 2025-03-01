@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Info } from "lucide-react";
 import Image from "next/image";
@@ -10,13 +10,14 @@ import InfoGarmin from "../../../../../../../../../../public/informacoesGarmin.s
 import CheckboxInformacoes from "@/components/CheckboxInformacoes";
 import Link from "next/link";
 import Canvas from "@/components/Canvas";
-import { useImageContext } from '@/context/ImageContext'; // Importa o hook do contexto
+import { useImage } from '@/context/ImageContext'; // Importa o hook do contexto
 
 
 export default function Posicao({ params }) {
-  const { imageUrl } = useImageContext(); // Acessa o valor da imagem do contexto
+  const { posicao } = React.use(params); 
+  const { imageUrl, zoom, position} = useImage();
 
-  const { posicao } = params; 
+
   const [imagemMain, setImagemMain] = useState(null); 
   console.log(posicao)
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function Posicao({ params }) {
           <Info className="text-white size-8"/>
         </div>
         <div className="w-full flex flex-col items-center gap-x-5">
-        {imagemMain && <Canvas template={imagemMain} image={imageUrl} />}
+        {imagemMain && <Canvas template={imagemMain} position={position} zoom={zoom} imageUrl={imageUrl} />}
         </div>
         
         

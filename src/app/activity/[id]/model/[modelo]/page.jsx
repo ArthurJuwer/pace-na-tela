@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useImageContext } from '@/context/ImageContext'; // Importa o hook do contexto
+import { useImage } from '@/context/ImageContext'; // Importa o hook do contexto
 import PostExample from "../../../../../../public/postTeste.svg";
 import PostLogo from "../../../../../../public/postLogo.svg";
 import PostUser from "../../../../../../public/postUser.svg";
@@ -16,18 +16,18 @@ import Templates from "@/components/Templates";
 
 const PHONE_WIDTH = 230;
 const PHONE_HEIGHT = 479;
-const PHONE_CONTENT_PADDING = 6;
 
 export default function Modelo({ params }) {
   const { modelo } = React.use(params);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { imageUrl, setImageUrl } = useImageContext(); 
+  // const { imageUrl, setImageUrl } = useImageContext(); 
+  const { imageUrl, zoom, position, updateImage, updateZoom, updatePosition } = useImage();
 
   // TENHO QUE EXPORTAR O CELULAR DIV COM A IMAGEM E NAO SOMENTE A IMAGEM
 
-  const [zoom, setZoom] = useState(1); 
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  // const [zoom, setZoom] = useState(1); 
+  // const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false); 
   const [startTouch, setStartTouch] = useState(null);
 
@@ -70,7 +70,7 @@ export default function Modelo({ params }) {
     } else if (e.touches.length === 2) {
       // Detecta o gesto de pinça para zoom
       const distance = getDistance(e.touches);
-      setZoom((prevZoom) => prevZoom * (distance / 200)); // Ajusta o zoom com base na distância
+      updateZoom((prevZoom) => prevZoom * (distance / 200)); // Ajusta o zoom com base na distância
     }
   };
 
@@ -79,7 +79,7 @@ export default function Modelo({ params }) {
       // Mover a imagem com o toque
       const dx = e.touches[0].clientX - startTouch.x;
       const dy = e.touches[0].clientY - startTouch.y;
-      setPosition((prevPos) => ({
+      updatePosition((prevPos) => ({
         x: prevPos.x + dx,
         y: prevPos.y + dy,
       }));
@@ -87,7 +87,7 @@ export default function Modelo({ params }) {
     } else if (e.touches.length === 2) {
       // Detecta o gesto de pinça para zoom
       const distance = getDistance(e.touches);
-      setZoom((prevZoom) => prevZoom * (distance / 200)); // Ajusta o zoom com base na distância
+      updateZoom((prevZoom) => prevZoom * (distance / 200)); // Ajusta o zoom com base na distância
     }
   };
 
@@ -124,16 +124,6 @@ export default function Modelo({ params }) {
                       
                       <div
                         className={`w-[${PHONE_WIDTH}px]  h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
-                        // style={{
-                        //   backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
-                        //   backgroundSize: 'cover',
-                        //   backgroundPosition: 'center',
-                        //   transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`, // Aplica o zoom e o movimento da imagem
-                        // }}
-                        // ref={imageRef}
-                        // onTouchStart={handleTouchStart}
-                        // onTouchMove={handleTouchMove}
-                        // onTouchEnd={handleTouchEnd}
                       >
                         <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="" ref={imageRef} style={{transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`}}
                         onTouchStart={handleTouchStart}
@@ -187,7 +177,7 @@ export default function Modelo({ params }) {
             <input
               type="text"
               value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)} // Usando o setImageUrl do contexto
+              onChange={(e) => updateImage(e.target.value)} // Usando o setImageUrl do contexto
               className="w-full p-2 border border-gray-300 rounded-lg"
               placeholder="URL da imagem"
             />
