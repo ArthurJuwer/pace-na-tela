@@ -37,12 +37,15 @@ export default function Modelo({ params }) {
   const imageRef = useRef(null); 
 
   const disableScroll = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    // Only prevent default if drag is active
+    if (isDragging) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
   useEffect(() => {
-    // Adiciona o evento de desabilitar scroll
+    // Add event listeners to disable scroll when dragging
     if (isDragging) {
       document.body.style.overflow = 'hidden';
       document.addEventListener('touchmove', disableScroll, { passive: false });
@@ -50,7 +53,7 @@ export default function Modelo({ params }) {
       document.body.style.overflow = 'auto';
       document.removeEventListener('touchmove', disableScroll);
     }
-
+  
     return () => {
       document.removeEventListener('touchmove', disableScroll);
       document.body.style.overflow = 'auto';
@@ -61,7 +64,6 @@ export default function Modelo({ params }) {
   const closeModal = () => setIsModalOpen(false);
 
   const handleUrlSubmit = () => {
-    console.log("URL da imagem:", imageUrl); // Verificando se a URL foi atualizada corretamente
     closeModal();
   };
 
@@ -130,7 +132,8 @@ export default function Modelo({ params }) {
                       <div
                         className={`w-[${PHONE_WIDTH}px]  h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
                       >
-                        <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="" ref={imageRef} style={{transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`}}
+                        <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="" ref={imageRef} style={{transform: `scale(${zoom}) 
+                        translate(${position.x}px, ${position.y}px)`}}
                         onTouchStart={handleTouchStart}
                         onTouchMove={handleTouchMove}
                         onTouchEnd={handleTouchEnd}/>
@@ -201,7 +204,7 @@ export default function Modelo({ params }) {
             <h2 className="text-xl font-semibold mb-4">Digite o URL da imagem</h2>
             <input
               type="text"
-              value={imageUrl}
+              value={imageUrl || ""}
               onChange={(e) => updateImage(e.target.value)} // Usando o setImageUrl do contexto
               className="w-full p-2 border border-gray-300 rounded-lg"
               placeholder="URL da imagem"
