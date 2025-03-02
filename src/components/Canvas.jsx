@@ -1,7 +1,6 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react';
 
-
 export default function Canvas({ imageUrl, position, zoom, template, shapes: initialShapes, updateShapes }) {
 
   // PRECISO PASSAR O SHAPES POR PARAMETRO PARA RECBER LA
@@ -19,17 +18,22 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
       templateUrl: template.src,
     },
   ]);
-  
 
   useEffect(() => {
     if (initialShapes && initialShapes.length > 0) {
-      setShapes(initialShapes);
+      // Atualize `shapes` apenas se for diferente
+      setShapes(prevShapes => {
+        if (JSON.stringify(prevShapes) !== JSON.stringify(initialShapes)) {
+          return initialShapes;
+        }
+        return prevShapes;
+      });
     }
-  }, [initialShapes]);
+  }, [initialShapes]); // Dependência correta
+  
   useEffect(() => {
     updateShapes(shapes);
   }, [shapes, updateShapes]);
-  
 
   const addShape = (newShape) => {
     const updatedShapes = [...shapes, newShape];
@@ -52,7 +56,6 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
   const handleDragStart = (e, shapeId) => {
     e.stopPropagation();
 
-    // Usar o primeiro toque
     const touch = e.touches[0];
     const shape = shapes.find(s => s.id === shapeId);
     if (!shape) return;
@@ -82,9 +85,6 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
     const phoneRect = phoneRef.current?.getBoundingClientRect();
     if (!phoneRect) return;
   
-    const offsetX = touch.clientX - phoneRect.left;
-    const offsetY = touch.clientY - phoneRect.top;
-  
     setIsResizing(true);
     setSelectedShape(shapeId);
     setResizeStart({
@@ -108,19 +108,22 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
       const deltaX = touch.clientX - dragStart.x;
       const deltaY = touch.clientY - dragStart.y;
   
-      setShapes(shapes.map(shape => {
-        if (shape.id === selectedShape) {
-          let newX = shape.x + deltaX;
-          let newY = shape.y + deltaY;
+      setShapes(prevShapes => {
+        const updatedShapes = prevShapes.map(shape => {
+          if (shape.id === selectedShape) {
+            let newX = shape.x + deltaX;
+            let newY = shape.y + deltaY;
+            return { ...shape, x: newX, y: newY };
+          }
+          return shape;
+        });
   
-          // Remover a limitação para permitir que a forma ultrapasse os limites
-          newX = newX;
-          newY = newY;
-  
-          return { ...shape, x: newX, y: newY };
+        // Verifique se houve mudança antes de atualizar
+        if (JSON.stringify(prevShapes) !== JSON.stringify(updatedShapes)) {
+          return updatedShapes;
         }
-        return shape;
-      }));
+        return prevShapes;
+      });
   
       setDragStart({ x: touch.clientX, y: touch.clientY });
     } else if (isResizing) {
@@ -131,7 +134,7 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
       const heightChange = deltaY;
   
       const aspectRatio = resizeStart.width / resizeStart.height;
-      
+  
       let newWidth = resizeStart.width + widthChange;
       let newHeight = resizeStart.height + heightChange;
   
@@ -141,15 +144,20 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
         newWidth = newHeight * aspectRatio;
       }
   
-      newWidth = newWidth;
-      newHeight = newHeight;
+      setShapes(prevShapes => {
+        const updatedShapes = prevShapes.map(shape => {
+          if (shape.id === selectedShape) {
+            return { ...shape, width: newWidth, height: newHeight };
+          }
+          return shape;
+        });
   
-      setShapes(shapes.map(shape => {
-        if (shape.id === selectedShape) {
-          return { ...shape, width: newWidth, height: newHeight };
+        // Verifique se houve mudança antes de atualizar
+        if (JSON.stringify(prevShapes) !== JSON.stringify(updatedShapes)) {
+          return updatedShapes;
         }
-        return shape;
-      }));
+        return prevShapes;
+      });
   
       setResizeStart({
         x: touch.clientX,
@@ -159,7 +167,6 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
       });
     }
   };
-  
   
 
   const handleTouchEnd = () => {
@@ -217,7 +224,7 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
                 <img src={shape.templateUrl} alt="User added" className="w-full h-full object-cover" draggable="false" />
                 {selectedShape === shape.id && (
                   <div
-                    className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 cursor-se-resize"
+                    className="absolute bottom-0 right-0 w-3 h-3 bg-blue-500 cursor-se-resize"
                     onTouchStart={(e) => handleResizeStart(e, shape.id)} // Começar redimensionamento
                   />
                 )}

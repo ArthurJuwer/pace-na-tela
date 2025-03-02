@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 const Activity = ({params}) => {
   const { id } = React.use(params); 
-  const [activity, setActivity] = useState(null);
+  // const [activity, setActivity] = useState(null);
   const [error, setError] = useState(null);
   const [selectedPosts, setSelectedPosts] = useState({});
 
@@ -49,10 +49,8 @@ const Activity = ({params}) => {
       const newSelection = { ...prev };
 
       if (newSelection[postType]) {
-        // Se já está selecionado, desmarque
         delete newSelection[postType];
       } else {
-        // Adicione novo post mantendo a ordem correta
         const values = Object.values(newSelection);
         if (values.length === 0) {
           newSelection[postType] = 1;
@@ -61,10 +59,9 @@ const Activity = ({params}) => {
         }
       }
 
-      // Ajustar numeração para evitar dois "1"
       const entries = Object.entries(newSelection);
-      entries.sort((a, b) => a[1] - b[1]); // Ordena pelo número (1, 2)
-      return Object.fromEntries(entries.map(([key], index) => [key, index + 1])); // Reatribui 1 e 2
+      entries.sort((a, b) => a[1] - b[1]); 
+      return Object.fromEntries(entries.map(([key], index) => [key, index + 1]));
     });
 
     
@@ -95,7 +92,8 @@ const Activity = ({params}) => {
           )}
           
           <div className='flex flex-col gap-y-4'>
-            <Image src={postInterativos} alt='' className='w-full mt-5' />
+            <Image src={postInterativos} alt='Seleção do Post Interativo' className='w-full h-auto mt-5' priority={true} />
+            {/* COLOQUEI PRIORITY PQ A IMAGEM É PESADA, DIMINUIR O TAMANHO DELA */}
             <h2 className="font-bold bg-white text-blueMain p-2 text-center rounded-2xl">Post Interativo</h2>
             <p className="text-sm text-center">
               Receba um post humorístico de acordo com as informações da sua
@@ -121,7 +119,7 @@ const Activity = ({params}) => {
             </div>
           )}
           <div className='flex flex-col gap-y-4'>
-            <Image src={postCustomizavel} alt='' className='w-full mt-5' />
+            <Image src={postCustomizavel} alt='Seleção do Post Customizável' className='w-full mt-5' />
             <h2 className="font-bold bg-white text-blueMain p-2 text-center rounded-2xl">Post Customizável</h2>
             <p className="text-sm text-center">
             Escolha entre templates

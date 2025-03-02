@@ -5,7 +5,7 @@ const ImageContext = createContext();
 
 // Provedor do contexto
 export const ImageProvider = ({ children }) => {
-  const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState(undefined);
   const [zoom, setZoom] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [shapes, setShapes] = useState({}); 

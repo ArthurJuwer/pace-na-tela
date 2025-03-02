@@ -14,12 +14,11 @@ import { useImage } from '@/context/ImageContext'; // Importa o hook do contexto
 
 
 export default function Posicao({ params }) {
-  const { id, posicao } = React.use(params); 
+  const { id, posicao } = React.use( params );
+
   const { imageUrl, zoom, position, shapes, updateShapes} = useImage();
-  // ADICIONAR
-
-
   const [imagemMain, setImagemMain] = useState(null); 
+  
   useEffect(() => {
     if (posicao == 4) {
       setImagemMain(InfoStrava);

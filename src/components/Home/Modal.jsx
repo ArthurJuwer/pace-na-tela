@@ -8,12 +8,13 @@ export default function Modal({ closeModal }) {
     // VER PARA ADICIONAR ROUTER
 
     const handleOpenLink = () => {
-        const activityIdPattern = /activities\/(\d+)/; // Regex para capturar o ID da atividade
-        const match = url.match(activityIdPattern); // Verifica se a URL corresponde ao padrão
+        const activityIdPattern = /activities\/(\d+)/; 
+        const match = url.match(activityIdPattern); 
 
         if (match) {
-            const activityId = match[1]; // Captura o ID da atividade
-            window.location.href = `/activity/${activityId}`; // Redireciona para a nova rota
+            const activityId = match[1]; 
+            window.location.href = `/activity/${activityId}`; 
+            // TROCAR AQUI
         } else {
             alert("Por favor, insira um URL válido da atividade do Strava.");
         }
@@ -47,12 +48,12 @@ export default function Modal({ closeModal }) {
                 <span className="block w-full h-1 bg-blueMain"></span>
             </div>
             <div className="flex flex-col gap-y-4">
-                <div className="bg-[#8C9BBC] py-3 rounded-xl flex items-center">
-                    <Image src={LogoStrava} className="h-8 -ml-4" alt="logo strava" />
+                <div className="bg-[#8C9BBC] p-3 rounded-xl flex items-center gap-x-5">
+                    <Image src={LogoStrava} className="h-8 w-auto" alt="logo strava" />
                     <h1 className="text-center text-white font-semibold">Entrar com Strava</h1>
                 </div>
-                <div className="bg-[#8C9BBC] py-3 rounded-xl flex items-center">
-                    <Image src={LogoAdidas} className="h-8 -ml-4" alt="logo adidas" />
+                <div className="bg-[#8C9BBC] p-3 rounded-xl flex items-center gap-x-5">
+                    <Image src={LogoAdidas} className="h-8  w-auto" alt="logo adidas" />
                     <h1 className="text-center text-white font-semibold">Entrar com Adidas RUN</h1>
                 </div>
                 <h1 className="text-center font-semibold text-blueSecond italic">Ver outros aplicativos</h1>
