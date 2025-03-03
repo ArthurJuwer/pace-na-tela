@@ -10,13 +10,14 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
     {
       id: '1',
       type: 'image',
-      x: 50,
-      y: 50,
-      width: 140,
-      height: 80,
+      x: (PHONE_WIDTH/2)-70,
+      y: (PHONE_HEIGHT/2)-40,
+      width: template.width,
+      height: template.height,
       templateUrl: template.src,
     },
   ]);
+  // console.log(template)
 
   const prevInitialShapesRef = useRef(initialShapes);
 

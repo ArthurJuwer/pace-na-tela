@@ -1,31 +1,18 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 
 import { Info } from "lucide-react";
-import Image from "next/image";
-import InfoStrava from "../../../../../../../../../../public/informacoesStrava.svg"; 
-import InfoGarmin from "../../../../../../../../../../public/informacoesGarmin.svg"; 
 
-import CheckboxInformacoes from "@/components/CheckboxInformacoes";
 import Link from "next/link";
 import Canvas from "@/components/Canvas";
 import { useImage } from '@/context/ImageContext'; // Importa o hook do contexto
 
 
-export default function Posicao({ params }) {
-  const { id, posicao } = React.use( params );
+export default function Pos({params}) {
+  const { id } = React.use( params );
 
-  const { imageUrl, zoom, position, shapes, updateShapes} = useImage();
-  const [imagemMain, setImagemMain] = useState(null); 
-  
-  useEffect(() => {
-    if (posicao == 4) {
-      setImagemMain(InfoStrava);
-    } else if (posicao == 5) {
-      setImagemMain(InfoGarmin);
-    }
-  }, [posicao]); 
+  const { imageUrl, zoom, position, shapes, atualTemplate, updateShapes} = useImage();
   
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center gap-y-12">
@@ -37,7 +24,7 @@ export default function Posicao({ params }) {
           <Info className="text-white size-8"/>
         </div>
         <div className="w-full flex flex-col items-center gap-x-5">
-        {imagemMain && <Canvas template={imagemMain} position={position} zoom={zoom} imageUrl={imageUrl} shapes={shapes} updateShapes={updateShapes} />}
+        {atualTemplate && <Canvas template={atualTemplate} position={position} zoom={zoom} imageUrl={imageUrl} shapes={shapes} updateShapes={updateShapes} />}
         </div>
         
         

@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import Image from 'next/image';
 import postInterativos from "../../../../public/posts01.svg"
 import postCustomizavel from "../../../../public/posts02.svg"
@@ -12,6 +12,8 @@ const Activity = ({params}) => {
   const [error, setError] = useState(null);
   const [selectedPosts, setSelectedPosts] = useState({});
 
+
+  // TROCAR PARA COMPONENTE QUE TENHA A FUNÇÃO ASYNC AWAIT
   // useEffect(() => {
   //   if (id) {
   //     const fetchActivity = async () => { 
@@ -119,7 +121,7 @@ const Activity = ({params}) => {
             </div>
           )}
           <div className='flex flex-col gap-y-4'>
-            <Image src={postCustomizavel} alt='Seleção do Post Customizável' className='w-full mt-5' />
+            <Image src={postCustomizavel} alt='Seleção do Post Customizável' className='w-full mt-5' priority={true} />
             <h2 className="font-bold bg-white text-blueMain p-2 text-center rounded-2xl">Post Customizável</h2>
             <p className="text-sm text-center">
             Escolha entre templates
