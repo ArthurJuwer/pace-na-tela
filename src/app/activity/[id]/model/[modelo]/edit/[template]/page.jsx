@@ -110,17 +110,19 @@ export default function Edit({ params }) {
     } else if (Number(template) === 5) {
       const content = selectedItems.map((item, index) => {
         return `
-          <div class="relative flex items-center justify-center w-28 h-28 border-4 border-${index === 1 ? 'blue' : index === 2 ? 'green' : 'red'}-500 rounded-full">
+          <div class="relative  flex items-center justify-center w-28 h-28 border-4 border-${index === 1 ? 'orange' : index === 2 ? 'blue' : 'green'}-500 rounded-full ${index === 1 ? ' -ml-5 -mr-5 z-50' : 'z-0'}">
+            
             <div class="text-center">
               <p class="text-xl font-bold text-gray-700">X</p>
               <p class="text-xs text-gray-500">${item.nome}</p>
             </div>
           </div>
         `;
+        // MELHORAR POR DENTRO
       }).join(''); 
 
       const wrappedContent = `
-      <div class="flex">
+      <div class="mx-2 flex justify-center items-center">
           ${content}
       </div>
     `;
