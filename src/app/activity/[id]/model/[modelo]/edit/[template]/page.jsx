@@ -131,21 +131,27 @@ export default function Edit({ params }) {
 
   const handleCapture = () => {
     if (contentRef.current) {
-      html2canvas(contentRef.current).then((canvas) => {
-        // Converte o canvas em uma imagem (Data URL)
-        const imgData = canvas.toDataURL("image/svg");
-        updateAtualTemplate(
-          {
+      html2canvas(contentRef.current, {
+        backgroundColor: null,
+        useCORS: true
+      }).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png"); 
+  
+        const maxWidth = 160; 
+        const scaleFactor = maxWidth / canvas.width;
+  
+        updateAtualTemplate({
           src: imgData,
-          width: 200,
-          height: 80,
-        }
-      ); // Salva a imagem no estado
-        redirect(`${template}/pos`)
+          width: maxWidth,
+          height: Math.round(canvas.height * scaleFactor) 
+        });
+  
+        redirect(`${template}/pos`);
       });
-      
     }
   };
+  
+  
 
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center gap-y-12">
@@ -157,8 +163,8 @@ export default function Edit({ params }) {
             <Info className="text-white size-8"/>
           </div>
           <div className="w-full flex flex-col items-center gap-x-5">
-            <div className="bg-gray-400 flex items-center justify-center p-8 rounded-3xl w-full ">
-              <div className="w-full h-auto" ref={contentRef} dangerouslySetInnerHTML={{ __html: htmlContent }} />
+            <div className="bg-gray-300 flex items-center justify-center p-8 rounded-3xl w-full ">
+              <div className="w-full h-auto bg-transparent" ref={contentRef} dangerouslySetInnerHTML={{ __html: htmlContent }} />
             </div>
             <div className="grid grid-cols-2 place-content-center gap-y-5 h-96">
               {checkBoxInformacoes.map((item, index) => (

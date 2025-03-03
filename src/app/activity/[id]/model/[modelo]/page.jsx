@@ -133,10 +133,11 @@ export default function Modelo({ params }) {
                         className={`w-[${PHONE_WIDTH}px]  h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
                       >
                         <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="" ref={imageRef} style={{transform: `scale(${zoom}) 
-                        translate(${position.x}px, ${position.y}px)`}}
+                        translate(${position.x}px, ${position.y}px)`,  touchAction: 'none' }}
                         onTouchStart={handleTouchStart}
                         onTouchMove={handleTouchMove}
-                        onTouchEnd={handleTouchEnd}/>
+                        onTouchEnd={handleTouchEnd}
+                        />
                         <button
                           className={`${imageUrl ? "hidden" : ""} bg-white p-3 rounded-full`}
                           onClick={openModal}

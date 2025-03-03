@@ -30,7 +30,9 @@ export default function Pos({params}) {
         
       </div>
       <div className="flex items-center justify-between w-full mt-6 px-4">
-        <button className="text-[#1E1E1E] font-semibold italic">
+        <button 
+          onClick={()=> history.go(-1)}
+          className="text-[#1E1E1E] font-semibold italic">
           &lt; voltar
         </button>
         <Link href={`/activity/${id}/model/customizavel`}

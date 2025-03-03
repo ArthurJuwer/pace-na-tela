@@ -6,6 +6,8 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
   const PHONE_WIDTH = 230;
   const PHONE_HEIGHT = 479;
 
+  // console.log(template)
+
   const [shapes, setShapes] = useState(Array.isArray(initialShapes) ? initialShapes : [
     {
       id: '1',
@@ -17,7 +19,7 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
       templateUrl: template.src,
     },
   ]);
-  // console.log(template)
+
 
   const prevInitialShapesRef = useRef(initialShapes);
 
@@ -30,16 +32,6 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
       prevInitialShapesRef.current = initialShapes;
     }
   }, [initialShapes]);
-
-  useEffect(() => {
-    updateShapes(shapes);
-  }, [shapes, updateShapes]);
-
-  const addShape = (newShape) => {
-    const updatedShapes = [...shapes, newShape];
-    setShapes(updatedShapes);
-    updateShapes(updatedShapes);
-  };
 
   const [selectedShape, setSelectedShape] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -171,6 +163,11 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
     setIsDragging(false);
     setIsResizing(false);
   };
+  
+  const handleSave = () => {
+    updateShapes(shapes)
+    alert('Shapes salvos com sucesso!');
+  };
 
   return (
     <div className="w-8/12">
@@ -214,6 +211,8 @@ export default function Canvas({ imageUrl, position, zoom, template, shapes: ini
           </div>
         </div>
       </div>
+      <button onClick={handleSave} className="mt-4 p-2 bg-blue-500 text-white rounded-md">Salvar Shapes</button>
+
     </div>
   );
 }
