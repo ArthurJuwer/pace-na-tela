@@ -1,50 +1,17 @@
 'use client'
-import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import postInterativos from "../../../../public/posts01.svg"
 import postCustomizavel from "../../../../public/posts02.svg"
 import Link from 'next/link';
+import { useActivityFetcher } from '@/hooks/ApiActivityFinder';
 
 const Activity = ({params}) => {
   const { id } = React.use(params); 
-  // const [activity, setActivity] = useState(null);
-  const [error, setError] = useState(null);
+  const { activity, error } = useActivityFetcher(id);
   const [selectedPosts, setSelectedPosts] = useState({});
+  console.log(activity)
 
-
-  // TROCAR PARA COMPONENTE QUE TENHA A FUNÇÃO ASYNC AWAIT
-  // useEffect(() => {
-  //   if (id) {
-  //     const fetchActivity = async () => { 
-  //       try {
-  //         const response = await axios.get(`https://www.strava.com/api/v3/activities/${id}`, {
-  //           headers: {
-  //             Authorization: `Bearer OCULTADO`, // Use uma variável de ambiente para o token
-  //             // TROCAR AQUI PELO TOKEN DO .ENV
-  //           },
-  //         });
-  //         setActivity(response.data);
-  //         console.log('Dados da atividade:', response.data);
-
-  //       } catch (err) {
-  //         // Melhore o tratamento de erros
-  //         if (err.response) {
-  //           setError(err.response.data);
-  //         } else {
-  //           setError({ message: 'Erro ao buscar a atividade.' });
-  //         }
-  //       }
-  //     };
-
-  //     fetchActivity(); // Chama a função sem passar o ID fixo
-  //   }
-
-  //   // AQUI ESTAMOS VERIFICANDO SE TEM ATIVIDADE DEPOIS A PESSOA IRA ESCOLHER QUAL ELA DESEJA E SO IREMOS MANDAR PARA A OUTRA PAGINA
-  //   // ONDE TEM AS INFORMAÇÔES OU O POST INTERATIVO O OBJETO PARA CONSEGUIR FILTRAR MELHOR ESTA PAGINA VERIFICA SE TEM E CASO
-  //   // ATUALMENTE SO ESTA FUNCIONANDO AS ATIVIDADES DA MINHA CONTA ARTHUR JUWER
-
-  // }, [id]);
 
   const handleSelectPost = (postType) => {
     setSelectedPosts((prev) => {

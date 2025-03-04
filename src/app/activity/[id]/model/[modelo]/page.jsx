@@ -5,11 +5,13 @@ import { useImage } from '@/context/ImageContext'; // Importa o hook do contexto
 
 import ModeloInfo from "../../../../../../public/informacoesStrava.svg";
 import ModeloGarmin from "../../../../../../public/informacoesGarmin.svg";
-import Image from "next/image";
 import { Info, Search } from "lucide-react";
 import Link from "next/link";
 import Templates from "@/components/Templates";
 import { useRouter } from "next/navigation";
+
+const PHONE_WIDTH = 230;
+const PHONE_HEIGHT = 479;
 
 export default function Modelo({ params }) {
   const { modelo } = React.use(params);
@@ -20,24 +22,17 @@ export default function Modelo({ params }) {
     }
   }, [modelo]);
 
-  const PHONE_WIDTH = 230;
-  const PHONE_HEIGHT = 479;
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const { imageUrl, setImageUrl } = useImageContext(); 
   const { imageUrl, zoom, position, shapes, updateImage, updateZoom, updatePosition } = useImage();
-  // TENHO QUE EXPORTAR O CELULAR DIV COM A IMAGEM E NAO SOMENTE A IMAGEM
 
-  // const [zoom, setZoom] = useState(1); 
-  // const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false); 
   const [startTouch, setStartTouch] = useState(null);
 
   const imageRef = useRef(null); 
 
   const disableScroll = (e) => {
-    // Only prevent default if drag is active
     if (isDragging) {
       e.preventDefault();
       e.stopPropagation();
@@ -45,7 +40,6 @@ export default function Modelo({ params }) {
   };
 
   useEffect(() => {
-    // Add event listeners to disable scroll when dragging
     if (isDragging) {
       document.body.style.overflow = 'hidden';
       document.addEventListener('touchmove', disableScroll, { passive: false });
@@ -67,13 +61,11 @@ export default function Modelo({ params }) {
     closeModal();
   };
 
-  // Função para lidar com o gesto de toque para mover a imagem
   const handleTouchStart = (e) => {
     if (e.touches.length === 1) {
       setIsDragging(true);
       setStartTouch({ x: e.touches[0].clientX, y: e.touches[0].clientY });
     } else if (e.touches.length === 2) {
-      // Detecta o gesto de pinça para zoom
       const distance = getDistance(e.touches);
       updateZoom((prevZoom) => prevZoom * (distance / 200)); // Ajusta o zoom com base na distância
     }
@@ -81,7 +73,6 @@ export default function Modelo({ params }) {
 
   const handleTouchMove = (e) => {
     if (isDragging && e.touches.length === 1) {
-      // Mover a imagem com o toque
       const dx = e.touches[0].clientX - startTouch.x;
       const dy = e.touches[0].clientY - startTouch.y;
       updatePosition((prevPos) => ({
@@ -90,7 +81,6 @@ export default function Modelo({ params }) {
       }));
       setStartTouch({ x: e.touches[0].clientX, y: e.touches[0].clientY });
     } else if (e.touches.length === 2) {
-      // Detecta o gesto de pinça para zoom
       const distance = getDistance(e.touches);
       updateZoom((prevZoom) => prevZoom * (distance / 200)); // Ajusta o zoom com base na distância
     }
