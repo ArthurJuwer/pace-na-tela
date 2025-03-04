@@ -10,7 +10,7 @@ import { useImage } from "@/context/ImageContext";
 
 
 export default function FinalizadoPage({ params }) {
-  const { modelo } = React.use(params); // Next.js automaticamente fornece os parâmetros
+  const { id, modelo } = React.use(params); // Next.js automaticamente fornece os parâmetros
   const { imageUrl, zoom, position, shapes} = useImage();
   const PHONE_WIDTH = 230;
   const PHONE_HEIGHT = 479;
@@ -102,8 +102,12 @@ export default function FinalizadoPage({ params }) {
             </div>
           </div>
         </div>
-        <Link href={'/'} className="font-bold italic"> - Voltar</Link>
-      </div>
+          <button 
+            onClick={()=> history.go(-1)}
+            className="text-[#1E1E1E] font-semibold italic">
+            &lt; voltar
+          </button>       
+        </div>
       ) : modelo === "interativo" ? (
         <div className="flex flex-col items-center justify-center gap-y-6">
           <h1 className="text-center text-3xl text-blueMain font-bold italic mt-14 w-10/12">Compartilhe o modelo que deseja!</h1>
@@ -163,7 +167,12 @@ export default function FinalizadoPage({ params }) {
               </div>
             </div>
           </div>
-          <Link href={'/'} className="font-bold italic"> - Voltar</Link>
+          <Link 
+              href={`/activity/${id}/`}
+              className="text-[#1E1E1E] font-semibold italic">
+              &lt; voltar
+            </Link>
+          {/* BOTÃO DIFERENTE POR CAUSA DO REDIRECIONAMENTO FINALIZADO */}
         </div>
       ) : (
         <p>Modelo desconhecido.</p>

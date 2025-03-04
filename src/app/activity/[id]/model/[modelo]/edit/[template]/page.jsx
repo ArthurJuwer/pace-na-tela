@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Info } from "lucide-react";
 import html2canvas from 'html2canvas';
 import CheckboxInformacoes from "@/components/CheckboxInformacoes";
+import useFormatValue from "@/hooks/useFormatValue"; // Ajuste o caminho conforme necessário
 
 import { useImage } from "@/context/ImageContext";
 import { redirect } from "next/navigation";
@@ -11,6 +12,7 @@ import { redirect } from "next/navigation";
 export default function Edit({ params }) {
 
   const { template } = React.use(params);
+  const { formatValue } = useFormatValue();
   const { activity, atualTemplate, updateAtualTemplate } = useImage();
 
   const [checkBoxInformacoes, setCheckBoxInformacoes] = useState([
@@ -64,17 +66,13 @@ export default function Edit({ params }) {
   const preencherValores = () => {
     const updatedCheckBoxInformacoes = [...checkBoxInformacoes];
   
-    updatedCheckBoxInformacoes.forEach(item => {
-      if (activity && activity[item.id]) {
-        item.value = activity[item.id]; 
-      } else {
-        item.value = undefined;
-      }
+    updatedCheckBoxInformacoes.forEach((item) => {
+      item.value = activity && activity[item.id] !== undefined 
+        ? formatValue(item.id, activity[item.id]) 
+        : "--";
     });
-
-    const filteredCheckBoxInformacoes = updatedCheckBoxInformacoes.filter(item => item.value !== undefined);
   
-    setCheckBoxInformacoes(filteredCheckBoxInformacoes);
+    setCheckBoxInformacoes(updatedCheckBoxInformacoes);
   };
   const selecionarAleatorios = () => {
     const maxSelections = templateLimits[Number(template)] || 3;
@@ -204,7 +202,9 @@ export default function Edit({ params }) {
           </div>
         </div>
         <div className="flex items-center justify-between w-full mt-6 px-4">
-          <button className="text-[#1E1E1E] font-semibold italic">
+          <button 
+            onClick={()=> history.go(-1)}
+            className="text-[#1E1E1E] font-semibold italic">
             &lt; voltar
           </button>
           <button onClick={handleCapture} className="bg-blueMain text-white px-10 py-1.5 rounded-2xl">

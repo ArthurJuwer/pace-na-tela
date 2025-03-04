@@ -8,10 +8,8 @@ import { useActivityFetcher } from '@/hooks/ApiActivityFinder';
 
 const Activity = ({params}) => {
   const { id } = React.use(params); 
-  const { activity, error } = useActivityFetcher(id);
+  const { error } = useActivityFetcher(id);
   const [selectedPosts, setSelectedPosts] = useState({});
-  console.log(activity)
-
 
   const handleSelectPost = (postType) => {
     setSelectedPosts((prev) => {
@@ -106,7 +104,9 @@ const Activity = ({params}) => {
         </div>
       </div>
       <div className="flex items-center justify-between w-full max-w-3xl mt-6">
-        <button className="text-[#1E1E1E] font-semibold italic">
+        <button 
+          onClick={()=> history.go(-1)}
+          className="text-[#1E1E1E] font-semibold italic">
           &lt; voltar
         </button>
         <Link 

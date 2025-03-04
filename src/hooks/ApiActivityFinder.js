@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useImage } from '@/context/ImageContext';
 
 export function useActivityFetcher(id) {
-  const [activity, setActivity] = useState(null);
   const [error, setError] = useState(null);
-  const { updateActivity } = useImage();  
-  // TALVEZ TIRAR ESTA activity E PUXAR PELO useImage()
+  const { updateActivity, updateImage, updateZoom, updatePosition, updateShapes, updateAtualTemplate } = useImage();  
+
   useEffect(() => {
     if (!id) return;
 
@@ -16,9 +15,10 @@ export function useActivityFetcher(id) {
         const response = await axios.get(`https://www.strava.com/api/v3/activities/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
+        resetarContext(); // Resetando antes de atualizar com a nova atividade
         updateActivity(response.data);
-        setActivity(response.data)
-        
+
       } catch (err) {
         setError(err.response?.data || { message: 'Erro ao buscar a atividade.' });
       }
@@ -27,5 +27,13 @@ export function useActivityFetcher(id) {
     fetchActivity();
   }, [id]);
 
-  return { activity, error };
+  const resetarContext = () => {
+    updateImage(null);
+    updateZoom(1);
+    updatePosition({ x: 0, y: 0 });
+    updateShapes({});
+    updateAtualTemplate({});
+  };
+
+  return { error };
 }
