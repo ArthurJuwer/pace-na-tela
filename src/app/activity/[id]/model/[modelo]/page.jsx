@@ -5,6 +5,8 @@ import { useImage } from '@/context/ImageContext'; // Importa o hook do contexto
 
 import ModeloInfo from "../../../../../../public/informacoesStrava.svg";
 import ModeloGarmin from "../../../../../../public/informacoesGarmin.svg";
+import logoStrava from "../../../../../../public/strava-logo-0.png"
+
 import { Info, Search } from "lucide-react";
 import Link from "next/link";
 import Templates from "@/components/Templates";
@@ -168,8 +170,9 @@ export default function Modelo({ params }) {
               <div className="flex flex-col gap-y-4 justify-start items-start w-full">
                 <h1 className="text-white font-semibold italic ml-1">Informações</h1>
                 <div className="grid grid-cols-2 gap-4">
-                  <Templates title='informações Strava' image={ModeloInfo} template={4} />
-                  <Templates title='informações Garmin' image={ModeloGarmin} template={5} />
+                  <Templates title='informações Strava' image={ModeloInfo} template={1} />
+                  <Templates title='informações Garmin' image={ModeloGarmin} template={2} />
+                  <Templates title='Logo Strava' image={logoStrava} template={3} />
 
 
                 </div>

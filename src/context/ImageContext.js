@@ -7,7 +7,8 @@ export const ImageProvider = ({ children }) => {
   const [imageUrl, setImageUrl] = useState(undefined);
   const [zoom, setZoom] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [shapes, setShapes] = useState({}); 
+  const [shapes, setShapes] = useState([]); 
+  // TROCAR AQUI PARA ARRAY
   const [atualTemplate, setAtualTemplate] = useState({}); 
   const [activity, setActivity] = useState({}); 
 
