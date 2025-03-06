@@ -12,40 +12,41 @@ export default function Pos({ params }) {
   const { imageUrl, zoom, position, shapes: initialShapes, atualTemplate, updateShapes } = useImage();
 
   const [shapes, setShapes] = useState(Array.isArray(initialShapes) ? initialShapes : []);
-  const prevInitialShapesRef = useRef(initialShapes);
+  // const prevInitialShapesRef = useRef(initialShapes);
+
+  // useEffect(() => {
+  //   // Atualizar shapes apenas se `initialShapes` realmente mudou
+  //   if (JSON.stringify(prevInitialShapesRef.current) !== JSON.stringify(initialShapes)) {
+  //     if (initialShapes && initialShapes.length > 0) {
+  //       setShapes(initialShapes);
+  //     }
+  //     prevInitialShapesRef.current = initialShapes;
+  //   }
+  // }, [initialShapes]);
 
   useEffect(() => {
-    // Atualizar shapes apenas se `initialShapes` realmente mudou
-    if (JSON.stringify(prevInitialShapesRef.current) !== JSON.stringify(initialShapes)) {
-      if (initialShapes && initialShapes.length > 0) {
-        setShapes(initialShapes);
-      }
-      prevInitialShapesRef.current = initialShapes;
-    }
-  }, [initialShapes]);
-  useEffect(() => {
-    // Adicionar o novo shape apenas se ele ainda não estiver na lista
-    setShapes(prevShapes => {
-      if (prevShapes.some(shape => shape.templateUrl === atualTemplate.src)) {
-        return prevShapes; // Não adiciona se já existir um shape com o mesmo template
-      }
-      return [
-        ...prevShapes,
-        {
-          id: prevShapes.length + 1,  
-          // TROCAR ISSO POR ID UNICO TIPO INFO_STRAVA
-          name: atualTemplate.name,
-          type: 'image',
-          x: (PHONE_WIDTH / 2) - 70,
-          y: (PHONE_HEIGHT / 2) - 40,
-          width: atualTemplate.width,
-          height: atualTemplate.height,
-          templateUrl: atualTemplate.src,
-        },
-      ];
-    });
-  }, [atualTemplate]); 
-  console.log(atualTemplate)
+    // Se não houver atualTemplate, não faz nada
+    if (!atualTemplate) return;
+  
+      // Cria o novo shape
+      const newShape = {
+        id: shapes.length + 1,  
+        name: atualTemplate.name,
+        type: 'image',
+        x: (PHONE_WIDTH / 2) - 70,
+        y: (PHONE_HEIGHT / 2) - 40,
+        width: atualTemplate.width,
+        height: atualTemplate.height,
+        templateUrl: atualTemplate.src,
+      };
+  
+      const newShapes = [...shapes, newShape];
+  
+    setShapes(newShapes)
+
+  }, [atualTemplate]);
+  
+  // console.log(shapes)
 
   const [selectedShape, setSelectedShape] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -184,7 +185,7 @@ export default function Pos({ params }) {
             <Info className="text-white size-8" />
           </div>
           <div className="w-full flex flex-col items-center gap-x-5">
-            {atualTemplate && (
+   
               <div className="w-8/12">
                 <div className="flex">
                   <div className={`relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600 w-[${PHONE_WIDTH}px] h-[${PHONE_HEIGHT}px]`}>
@@ -226,7 +227,7 @@ export default function Pos({ params }) {
                   </div>
                 </div>
               </div>
-            )}
+            
           </div>
         </div>
         <div className="flex items-center justify-between w-full mt-6 px-4">

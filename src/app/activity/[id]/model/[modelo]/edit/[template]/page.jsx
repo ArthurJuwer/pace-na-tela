@@ -1,11 +1,12 @@
 'use client'
-
 import React, { useEffect, useRef, useState } from "react";
 import { Info } from "lucide-react";
 import html2canvas from 'html2canvas';
 import CheckboxInformacoes from "@/components/CheckboxInformacoes";
 import useFormatValue from "@/hooks/useFormatValue"; // Ajuste o caminho conforme necessário
 import logoStrava from "../../../../../../../../public/strava-logo-0.png"
+import fundoTransparente from "../../../../../../../../public/fundo-transparente.png"
+// SUBSTITUIR NO FUTURO POR HTML,TAILWID
 
 import { useImage } from "@/context/ImageContext";
 import { redirect } from "next/navigation";
@@ -46,12 +47,11 @@ export default function Edit({ params }) {
     3: 0
   };
 
-  useEffect(()=>{
-    preencherValores()
-  }, [])
+  useEffect(() => {
+    preencherValores();
+  }, []);
 
-  const contentRef = useRef(null); 
-  
+  const contentRef = useRef(null);
 
   const toggleSelect = (index) => {
     const updatedCheckBoxInformacoes = [...checkBoxInformacoes];
@@ -99,41 +99,41 @@ export default function Edit({ params }) {
   };
 
   const selecionarAleatorios = (availableItems) => {
-  const maxSelections = templateLimits[Number(template)] || 3;
+    const maxSelections = templateLimits[Number(template)] || 3;
 
-  if (availableItems.length === 0) return;
+    if (availableItems.length === 0) return;
 
-  availableItems.forEach(item => (item.isSelect = false));
+    availableItems.forEach(item => (item.isSelect = false));
 
-  let selectedIndices = new Set();
-  while (selectedIndices.size < Math.min(maxSelections, availableItems.length)) {
-    selectedIndices.add(Math.floor(Math.random() * availableItems.length));
-  }
+    let selectedIndices = new Set();
+    while (selectedIndices.size < Math.min(maxSelections, availableItems.length)) {
+      selectedIndices.add(Math.floor(Math.random() * availableItems.length));
+    }
 
-  selectedIndices.forEach(index => (availableItems[index].isSelect = true));
+    selectedIndices.forEach(index => (availableItems[index].isSelect = true));
 
-  setCheckBoxInformacoes([...availableItems]);
-};
+    setCheckBoxInformacoes([...availableItems]);
+  };
+
   const [htmlContent, setHtmlContent] = useState('');
+  const [textColor, setTextColor] = useState('text-gray-700');
+  const [bgColor, setBgColor] = useState('bg-gray-300'); // Novo estado para armazenar a cor de fundo
 
-  
   useEffect(() => {
     const selectedItems = checkBoxInformacoes.filter(item => item.isSelect);
 
     if (Number(template) === 1) {
-      // TROCAR O TEMPLATE == (1) por uma busca do banco de dados, onde tera todos os valores e nao ira vir do nada
-      
       const content = selectedItems.map((item, _index) => {
         return `
             <div class="text-center">
               <p class="text-xs text-gray-500">${item.nome}</p>
-              <p class="text-xl font-bold text-gray-700">${item.value}</p>
+              <p class="text-xl font-bold ${textColor}">${item.value}</p>
             </div>
           `;
       }).join(''); 
       
       const wrappedContent = `
-      <div class="w-full grid grid-cols-2 gap-6">
+      <div class="w-full grid grid-cols-2 gap-6 ${bgColor} p-8 rounded-3xl"> <!-- bgColor é utilizado aqui -->
           ${content}
       </div>
     `;
@@ -142,19 +142,17 @@ export default function Edit({ params }) {
     } else if (Number(template) === 2) {
       const content = selectedItems.map((item, index) => {
         return `
-          <div class="relative  flex items-center justify-center w-28 h-28 border-4 border-${index === 1 ? 'orange' : index === 2 ? 'blue' : 'green'}-500 rounded-full ${index === 1 ? ' -ml-5 -mr-5 z-50' : 'z-0'}">
-            
+          <div class="relative flex items-center justify-center w-28 h-28 border-4 border-${index === 1 ? 'orange' : index === 2 ? 'blue' : 'green'}-500 rounded-full ${index === 1 ? ' -ml-5 -mr-5 z-50' : 'z-0'}">
             <div class="text-center">
-              <p class="text-xl font-bold text-gray-700">${item.value}</p>
+              <p class="text-xl font-bold ${textColor}">${item.value}</p>
               <p class="text-xs text-gray-500">${item.nome}</p>
             </div>
           </div>
         `;
-        // MELHORAR POR DENTRO
       }).join(''); 
 
       const wrappedContent = `
-      <div class="mx-2 flex justify-center items-center">
+      <div class="mx-2 ${bgColor} flex items-center justify-center p-8 rounded-3xl w-full"> <!-- bgColor é utilizado aqui -->
           ${content}
       </div>
     `;
@@ -167,16 +165,14 @@ export default function Edit({ params }) {
         semDados: true,
         imagem: logoStrava,
         name: 'logo_strava'
-      })
-      // IRA PUXAR DO BANCO DE DADOS
+      });
     }
+  }, [template, checkBoxInformacoes, bgColor]); // bgColor é dependência agora
 
-  }, [template, checkBoxInformacoes]);
+  const handleCapture = ({ semDados, imagem, name }) => {
+    const maxWidth = 160;
 
-  const handleCapture = ({semDados, imagem, name }) => {
-    const maxWidth = 160; 
-
-    if(semDados === true){
+    if (semDados === true) {
       const scaleFactor = maxWidth / imagem.width;
 
       updateAtualTemplate({
@@ -184,7 +180,6 @@ export default function Edit({ params }) {
         width: maxWidth,
         height: Math.round(imagem.height * scaleFactor), 
         name: name
-        
       });
       redirect(`${template}/pos`);
     }
@@ -194,24 +189,26 @@ export default function Edit({ params }) {
         useCORS: true
       }).then((canvas) => {
         const imgData = canvas.toDataURL("image/png"); 
-  
-
         const scaleFactor = maxWidth / canvas.width;
-  
+
+        let generatedName = ''
+        if (Number(template) === 1) {
+          generatedName = 'info_strava'
+        } else if(Number(template) === 2){
+          generatedName = 'info_garmin'
+        }
+
         updateAtualTemplate({
           src: imgData,
           width: maxWidth,
           height: Math.round(canvas.height * scaleFactor),
-          name: ''
-          // VER COMO POSSO ADICIONAR AQUI OS NAMES
+          name: generatedName
         });
-  
+
         redirect(`${template}/pos`);
       });
     }
   };
-  
-  
 
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center gap-y-12">
@@ -223,21 +220,33 @@ export default function Edit({ params }) {
             <Info className="text-white size-8"/>
           </div>
           <div className="w-full flex flex-col items-center gap-10">
-            <div className="bg-gray-300 flex items-center justify-center p-8 rounded-3xl w-full ">
-              <div className="w-full h-auto bg-transparent" ref={contentRef} dangerouslySetInnerHTML={{ __html: htmlContent }} />
+            <div className="w-full h-auto bg-transparent" ref={contentRef} dangerouslySetInnerHTML={{ __html: htmlContent }} />
+            <div className="flex gap-4">
+              <button
+                onClick={() => {setBgColor('bg-transparent'); setTextColor('text-white')}} 
+                
+                // ALTERAR PARA COLOCAR BG-IMAGE 
+
+                style={{ backgroundImage: `url('${fundoTransparente.src}')`, backgroundSize: 'cover', backgroundPosition: "center" }}
+                className="p-5 border-2 border-black rounded">
+              </button>
+              <button onClick={() => {setBgColor('bg-black'); setTextColor('text-white')}} className="p-5 bg-black border-black border-2 rounded"></button>
+              <button onClick={() => {setBgColor('bg-white'); setTextColor('text-black')}} className="p-5 bg-white border-black border-2 rounded"></button>
             </div>
+
             <div className="grid grid-cols-2 place-content-center gap-5">
               {checkBoxInformacoes.map((item, index) => (
-                  <CheckboxInformacoes
-                    key={'checkbox ' + index}
-                    title={item.nome}
-                    isSelect={item.isSelect}
-                    toggleSelect={() => toggleSelect(index)}
-                  />
-                ))}
+                <CheckboxInformacoes
+                  key={'checkbox ' + index}
+                  title={item.nome}
+                  isSelect={item.isSelect}
+                  toggleSelect={() => toggleSelect(index)}
+                />
+              ))}
             </div>
           </div>
         </div>
+        
         <div className="flex items-center justify-between w-full mt-6 px-4">
           <button 
             onClick={()=> history.go(-1)}
