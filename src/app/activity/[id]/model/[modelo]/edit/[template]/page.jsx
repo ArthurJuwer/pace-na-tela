@@ -5,7 +5,6 @@ import html2canvas from 'html2canvas';
 import CheckboxInformacoes from "@/components/CheckboxInformacoes";
 import useFormatValue from "@/hooks/useFormatValue"; // Ajuste o caminho conforme necessário
 import logoStrava from "../../../../../../../../public/strava-logo-0.png"
-import fundoTransparente from "../../../../../../../../public/fundo-transparente.png"
 // SUBSTITUIR NO FUTURO POR HTML,TAILWID
 
 import { useImage } from "@/context/ImageContext";
@@ -116,8 +115,8 @@ export default function Edit({ params }) {
   };
 
   const [htmlContent, setHtmlContent] = useState('');
-  const [textColor, setTextColor] = useState('text-gray-700');
-  const [bgColor, setBgColor] = useState('bg-gray-300'); // Novo estado para armazenar a cor de fundo
+  const [textColor, setTextColor] = useState('text-white text-shadow');
+  const [bgColor, setBgColor] = useState('bg-fundo-transparente'); // Novo estado para armazenar a cor de fundo
 
   useEffect(() => {
     const selectedItems = checkBoxInformacoes.filter(item => item.isSelect);
@@ -133,7 +132,7 @@ export default function Edit({ params }) {
       }).join(''); 
       
       const wrappedContent = `
-      <div class="w-full grid grid-cols-2 gap-6 ${bgColor} p-8 rounded-3xl"> <!-- bgColor é utilizado aqui -->
+      <div class="w-full grid grid-cols-2 gap-6 ${bgColor}  p-8 rounded-3xl">
           ${content}
       </div>
     `;
@@ -152,7 +151,7 @@ export default function Edit({ params }) {
       }).join(''); 
 
       const wrappedContent = `
-      <div class="mx-2 ${bgColor} flex items-center justify-center p-8 rounded-3xl w-full"> <!-- bgColor é utilizado aqui -->
+      <div class="mx-2 ${bgColor}  flex items-center justify-center p-8 rounded-3xl w-full">
           ${content}
       </div>
     `;
@@ -223,12 +222,16 @@ export default function Edit({ params }) {
             <div className="w-full h-auto bg-transparent" ref={contentRef} dangerouslySetInnerHTML={{ __html: htmlContent }} />
             <div className="flex gap-4">
               <button
-                onClick={() => {setBgColor('bg-transparent'); setTextColor('text-white')}} 
-                
+                onClick={() => {
+                  setBgColor('bg-fundo-transparente');
+                  setTextColor('text-white text-shadow');
+              }}
+              
+              
+              
                 // ALTERAR PARA COLOCAR BG-IMAGE 
 
-                style={{ backgroundImage: `url('${fundoTransparente.src}')`, backgroundSize: 'cover', backgroundPosition: "center" }}
-                className="p-5 border-2 border-black rounded">
+                className="p-5 border-2 border-black rounded bg-fundo-transparente bg-center ">
               </button>
               <button onClick={() => {setBgColor('bg-black'); setTextColor('text-white')}} className="p-5 bg-black border-black border-2 rounded"></button>
               <button onClick={() => {setBgColor('bg-white'); setTextColor('text-black')}} className="p-5 bg-white border-black border-2 rounded"></button>

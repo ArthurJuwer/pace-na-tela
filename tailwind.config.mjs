@@ -16,6 +16,10 @@ export default {
         myanmar: ['"Myanmar Khyay"', 'sans-serif'],
         inter: ['Inter', 'sans-serif'],
       },
+      backgroundImage: {
+        'fundo-transparente': "url('/fundo-transparente.png')",
+      },
+      
     },
   },
   plugins: [],
