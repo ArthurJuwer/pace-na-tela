@@ -114,9 +114,16 @@ export default function Edit({ params }) {
     setCheckBoxInformacoes([...availableItems]);
   };
 
-  const [htmlContent, setHtmlContent] = useState('');
+  const [activeSection, setActiveSection] = useState('Informações'); // Usando um único estado para gerenciar visibilidade
+
+  const toggleVisibility = (section) => {
+    setActiveSection(section === activeSection ? '' : section); // Toggle visibility of selected section
+  };
+
+
   const [textColor, setTextColor] = useState('text-white text-shadow');
-  const [bgColor, setBgColor] = useState('bg-fundo-transparente'); // Novo estado para armazenar a cor de fundo
+  const [bgColor, setBgColor] = useState('bg-fundo-transparente'); 
+  const [htmlContent, setHtmlContent] = useState('');
 
   useEffect(() => {
     const selectedItems = checkBoxInformacoes.filter(item => item.isSelect);
@@ -124,12 +131,13 @@ export default function Edit({ params }) {
     if (Number(template) === 1) {
       const content = selectedItems.map((item, _index) => {
         return `
-            <div class="text-center">
-              <p class="text-xs text-gray-500">${item.nome}</p>
-              <p class="text-xl font-bold ${textColor}">${item.value}</p>
-            </div>
-          `;
-      }).join(''); 
+          <div class="text-center">
+            <p class="text-xs text-gray-500">${item.nome}</p>
+            <p class="text-xl font-bold ${textColor}">${item.value}</p>
+          </div>
+        `;
+      }).join('');
+      
       
       const wrappedContent = `
       <div class="w-full grid grid-cols-2 gap-6 ${bgColor}  p-8 rounded-3xl">
@@ -151,7 +159,7 @@ export default function Edit({ params }) {
       }).join(''); 
 
       const wrappedContent = `
-      <div class="mx-2 ${bgColor}  flex items-center justify-center p-8 rounded-3xl w-full">
+      <div class="mx-2 ${bgColor} flex items-center justify-center p-8 rounded-3xl w-full">
           ${content}
       </div>
     `;
@@ -166,7 +174,7 @@ export default function Edit({ params }) {
         name: 'logo_strava'
       });
     }
-  }, [template, checkBoxInformacoes, bgColor]); // bgColor é dependência agora
+  }, [template, checkBoxInformacoes, bgColor, textColor]); // AQUI IRÁ ATUALIZAR O CONTEUDO HTML
 
   const handleCapture = ({ semDados, imagem, name }) => {
     const maxWidth = 160;
@@ -220,33 +228,65 @@ export default function Edit({ params }) {
           </div>
           <div className="w-full flex flex-col items-center gap-10">
             <div className="w-full h-auto bg-transparent" ref={contentRef} dangerouslySetInnerHTML={{ __html: htmlContent }} />
-            <div className="flex gap-4">
-              <button
-                onClick={() => {
-                  setBgColor('bg-fundo-transparente');
-                  setTextColor('text-white text-shadow');
-              }}
-              
-              
-              
-                // ALTERAR PARA COLOCAR BG-IMAGE 
+            <section className="w-full bg-blueThird py-4 rounded-xl">
+              <ul className="flex justify-around text-white text-xs font-medium">
+                <li onClick={() => toggleVisibility('Informações')}>
+                  Informações
+                </li>
+                <li onClick={() => toggleVisibility('Fundo')}>
+                Fundo
+                </li>
+                <li onClick={() => toggleVisibility('Texto')}>
+                  Texto
+                </li>
+                <li onClick={() => toggleVisibility('Ordem')}>
+                  Ordem
+                </li>
+              </ul>
+            </section>
 
-                className="p-5 border-2 border-black rounded bg-fundo-transparente bg-center ">
-              </button>
-              <button onClick={() => {setBgColor('bg-black'); setTextColor('text-white')}} className="p-5 bg-black border-black border-2 rounded"></button>
-              <button onClick={() => {setBgColor('bg-white'); setTextColor('text-black')}} className="p-5 bg-white border-black border-2 rounded"></button>
-            </div>
+            {activeSection === 'Informações' && 
+              <div className="w-full px-3 flex flex-col gap-y-6 text-white">
+              <h1 className="text-xl font-bold italic">Selecione as informações:</h1>
+                <div className="grid grid-cols-2 place-content-center gap-5"> 
+                  {checkBoxInformacoes.map((item, index) => (
+                    <CheckboxInformacoes
+                      key={'checkbox ' + index}
+                      title={item.nome}
+                      isSelect={item.isSelect}
+                      toggleSelect={() => toggleSelect(index)}
+                    />
+                  ))}
+                </div>
+              </div>
+            }
+            {activeSection === 'Fundo' && 
+            <div className="w-full px-3 flex flex-col gap-y-6 text-white">
+              <h1 className="text-xl font-bold italic">Cor do Fundo:</h1>
+                <div className="grid grid-cols-5 gap-4" >
+                  <button onClick={() => {setBgColor('bg-fundo-transparente'); setTextColor('text-white text-shadow');}} className="p-7 border-2 border-black rounded bg-fundo-transparente bg-center "></button>
+                  {/* FAZER COM QUE PEGUE O TEXT ANTERIOR E ADICIONE O TEXT-SHADOW CASO FOR BRANCO */}
+                    <button onClick={() => setBgColor('bg-black')} className="p-7 bg-black border-black border-2 rounded"></button>
+                    <button onClick={() => setBgColor('bg-white')} className="p-7 bg-white border-black border-2 rounded"></button>
+                    <button onClick={() => setBgColor('bg-green-600')} className="p-7 bg-green-600 border-black border-2 rounded"></button>
+                    <button onClick={() => setBgColor('bg-gray-600')} className="p-7 bg-gray-600 border-black border-2 rounded"></button>
+                </div>
+              </div>
+            }
 
-            <div className="grid grid-cols-2 place-content-center gap-5">
-              {checkBoxInformacoes.map((item, index) => (
-                <CheckboxInformacoes
-                  key={'checkbox ' + index}
-                  title={item.nome}
-                  isSelect={item.isSelect}
-                  toggleSelect={() => toggleSelect(index)}
-                />
-              ))}
-            </div>
+          {activeSection === 'Texto' && 
+          <div className="w-full px-3 flex flex-col gap-y-6 text-white">
+              <h1 className="text-xl font-bold italic">Cor do Texto:</h1>
+                <div className="grid grid-cols-5 gap-4" >
+                  <button onClick={() => {setTextColor('text-black')}} className="p-7 bg-black border-black border-2 rounded"></button>
+                  <button onClick={() => {setTextColor('text-white')}} className="p-7 bg-white border-black border-2 rounded"></button>
+                  <button onClick={() => {setTextColor('text-[#1E1E1E]')}} className="p-7 bg-[#1E1E1E] border-black border-2 rounded"></button>
+                  <button onClick={() => {setTextColor('text-gray-600')}} className="p-7 bg-gray-600 border-black border-2 rounded"></button>
+                  <button onClick={() => {setTextColor('text-gray-400')}} className="p-7 bg-gray-400 border-black border-2 rounded"></button>
+                </div>
+              </div>
+          }
+          {activeSection === 'Ordem' && <p className="text-white">Ordem visível aqui...</p>}
           </div>
         </div>
         
