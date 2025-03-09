@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useRef, useState } from "react";
-import { Info } from "lucide-react";
+import { Info, Pickaxe, Pipette } from "lucide-react";
 import html2canvas from 'html2canvas';
 import CheckboxInformacoes from "@/components/CheckboxInformacoes";
 import useFormatValue from "@/hooks/useFormatValue"; // Ajuste o caminho conforme necessário
@@ -9,6 +9,7 @@ import logoStrava from "../../../../../../../../public/strava-logo-0.png"
 
 import { useImage } from "@/context/ImageContext";
 import { redirect } from "next/navigation";
+import TemplateButton from "@/components/Activity/TemplateButton";
 
 export default function Edit({ params }) {
 
@@ -39,6 +40,60 @@ export default function Edit({ params }) {
     { id: "location_state", nome: "Estado", isSelect: false, value: undefined, type: "string" },
     { id: "location_country", nome: "País", isSelect: false, value: undefined, type: "string" }
   ]);
+  const buttonsFundo = [
+    { bgColor: "url('/fundo-transparente.png')"}, // Transparente
+    { bgColor: '#000000' }, // Preto
+    { bgColor: '#2F2F2F' }, // Cinza escuro forte
+    { bgColor: '#4B5563' }, // Cinza-600
+    { bgColor: '#9CA3AF' }, // Cinza
+    { bgColor: '#D1D5DB' }, // Cinza fraco
+    { bgColor: '#2C6B2F' }, // Verde forte
+    { bgColor: '#16A34A' }, // Verde-600
+    { bgColor: '#1DB954' }, // Verde (Instagram)
+    { bgColor: '#6B4226' }, // Marrom
+    { bgColor: '#FF7F00' }, // Laranja
+    { bgColor: '#FB923C' }, // Laranja-400
+    { bgColor: '#FBBF24' }, // Amarelo-300
+    { bgColor: '#F8C41A' }, // Amarelo (Instagram)
+    { bgColor: '#0095F6' }, // Azul
+    { bgColor: '#60A5FA' }, // Azul-400
+    { bgColor: '#FF4D4D' }, // Vermelho fraco
+    { bgColor: '#EF4444' }, // Vermelho-500
+    { bgColor: '#FF0000' }, // Vermelho
+    { bgColor: '#EC4899' }, // Rosa-500
+    { bgColor: '#F472B6' }, // Rosa normal
+    { bgColor: '#EC4899' }, // Rosa forte
+    { bgColor: '#9B4D96' }, // Roxo
+    { bgColor: '#6B21A8' }, // Roxo-700
+];
+
+const textButtons = [
+  { textColor: '#FFFFFF' },
+  { textColor: '#E5E7EB' },
+  { textColor: '#D1D5DB' },
+  { textColor: '#F9A8D4' },
+  { textColor: '#F8C41A' },
+  { textColor: '#F472B6' },
+  { textColor: '#FF007F' },
+  { textColor: '#FF4D4D' },
+  { textColor: '#FFA07A' },
+  { textColor: '#6B4226' },
+  { textColor: '#D97706' },
+  { textColor: '#0095F6' },
+  { textColor: '#1E1E1E' },
+  { textColor: '#FF7F00' },
+  { textColor: '#1DB954' },
+  { textColor: '#16A34A' },
+  { textColor: '#2C6B2F' },
+  { textColor: '#FF0000' },
+  { textColor: '#9B4D96' },
+  { textColor: '#EC4899' },
+  { textColor: '#9CA3AF' },
+  { textColor: '#2F2F2F' },
+  { textColor: '#4B5563' },
+  { textColor: '#000000' },
+
+];
 
   const templateLimits = {
     1: 6,  
@@ -120,9 +175,30 @@ export default function Edit({ params }) {
     setActiveSection(section === activeSection ? '' : section); // Toggle visibility of selected section
   };
 
+  const moveSelectedItem = (index, direction) => {
+    const selectedItems = checkBoxInformacoes.filter(item => item.isSelect);
+    const targetIndex = index + direction;
+  
+    if (targetIndex < 0 || targetIndex >= selectedItems.length) return;
+  
+    // Reorganiza diretamente na lista original com base na seleção
+    const updatedCheckBoxInformacoes = [...checkBoxInformacoes];
+    
+    const currentIndex = updatedCheckBoxInformacoes.findIndex(item => item.id === selectedItems[index].id);
+    const targetItemIndex = updatedCheckBoxInformacoes.findIndex(item => item.id === selectedItems[targetIndex].id);
+    
+    // Troca os itens
+    [updatedCheckBoxInformacoes[currentIndex], updatedCheckBoxInformacoes[targetItemIndex]] = 
+    [updatedCheckBoxInformacoes[targetItemIndex], updatedCheckBoxInformacoes[currentIndex]];
+  
+    setCheckBoxInformacoes(updatedCheckBoxInformacoes);
+  };
+  
 
-  const [textColor, setTextColor] = useState('text-white text-shadow');
-  const [bgColor, setBgColor] = useState('bg-fundo-transparente'); 
+
+  const [textColor, setTextColor] = useState('#FFFFFF');
+  const [textShadow, setTextShadow] = useState('');
+  const [bgColor, setBgColor] = useState('#1E1E1E'); 
   const [htmlContent, setHtmlContent] = useState('');
 
   useEffect(() => {
@@ -133,17 +209,18 @@ export default function Edit({ params }) {
         return `
           <div class="text-center">
             <p class="text-xs text-gray-500">${item.nome}</p>
-            <p class="text-xl font-bold ${textColor}">${item.value}</p>
+            <p class="text-xl font-bold" style="color:${textColor};text-shadow:${textShadow}">${item.value}</p>
           </div>
         `;
       }).join('');
       
       
       const wrappedContent = `
-      <div class="w-full grid grid-cols-2 gap-6 ${bgColor}  p-8 rounded-3xl">
-          ${content}
-      </div>
-    `;
+  <div class="w-full grid grid-cols-2 gap-6 p-8 rounded-3xl" style="background:${bgColor}">
+      ${content}
+  </div>
+`;
+
 
       setHtmlContent(wrappedContent); 
     } else if (Number(template) === 2) {
@@ -151,7 +228,7 @@ export default function Edit({ params }) {
         return `
           <div class="relative flex items-center justify-center w-28 h-28 border-4 border-${index === 1 ? 'orange' : index === 2 ? 'blue' : 'green'}-500 rounded-full ${index === 1 ? ' -ml-5 -mr-5 z-50' : 'z-0'}">
             <div class="text-center">
-              <p class="text-xl font-bold ${textColor}">${item.value}</p>
+              <p class="text-xl font-bold" style="color:${textColor};text-shadow:${textShadow}">${item.value}</p>
               <p class="text-xs text-gray-500">${item.nome}</p>
             </div>
           </div>
@@ -159,7 +236,7 @@ export default function Edit({ params }) {
       }).join(''); 
 
       const wrappedContent = `
-      <div class="mx-2 ${bgColor} flex items-center justify-center p-8 rounded-3xl w-full">
+      <div class="mx-2 flex items-center justify-center p-8 rounded-3xl w-full" style="background:${bgColor}">
           ${content}
       </div>
     `;
@@ -174,8 +251,19 @@ export default function Edit({ params }) {
         name: 'logo_strava'
       });
     }
-  }, [template, checkBoxInformacoes, bgColor, textColor]); // AQUI IRÁ ATUALIZAR O CONTEUDO HTML
+  }, [template, checkBoxInformacoes, bgColor, textColor, textShadow]); // AQUI IRÁ ATUALIZAR O CONTEUDO HTML
 
+  const PreHandleCapture = () => {
+    if (bgColor === "url('/fundo-transparente.png')") {
+      setBgColor('transparent');
+      setTextShadow('');
+    }
+    setTimeout(() => {
+        handleCapture(false, '', '');
+    }, 500);
+    
+
+  };
   const handleCapture = ({ semDados, imagem, name }) => {
     const maxWidth = 160;
 
@@ -190,7 +278,9 @@ export default function Edit({ params }) {
       });
       redirect(`${template}/pos`);
     }
+    
     if (contentRef.current) {
+      
       html2canvas(contentRef.current, {
         backgroundColor: null,
         useCORS: true
@@ -211,7 +301,6 @@ export default function Edit({ params }) {
           height: Math.round(canvas.height * scaleFactor),
           name: generatedName
         });
-
         redirect(`${template}/pos`);
       });
     }
@@ -264,12 +353,31 @@ export default function Edit({ params }) {
             <div className="w-full px-3 flex flex-col gap-y-6 text-white">
               <h1 className="text-xl font-bold italic">Cor do Fundo:</h1>
                 <div className="grid grid-cols-5 gap-4" >
-                  <button onClick={() => {setBgColor('bg-fundo-transparente'); setTextColor('text-white text-shadow');}} className="p-7 border-2 border-black rounded bg-fundo-transparente bg-center "></button>
+
+                  
+                  <div className="p-7 bg-gradient-to-r from-violet-600 to-pink-500 border-gray-200 border-2 rounded-2xl flex items-center justify-center relative">
+                    <input 
+                      type="color" 
+                      value={bgColor}
+                      onChange={(e) => {setBgColor(e.target.value)}}
+                      className="size-10 cursor-pointer rounded-full border-2 border-gray-300 opacity-0 absolute z-10"  // Esconde o input mas mantém interativo
+                    />
+                    <Pipette className="absolute  z-0" size={30} />  {/* Ícone sobre o input */}
+                  </div>
+
+                  
                   {/* FAZER COM QUE PEGUE O TEXT ANTERIOR E ADICIONE O TEXT-SHADOW CASO FOR BRANCO */}
-                    <button onClick={() => setBgColor('bg-black')} className="p-7 bg-black border-black border-2 rounded"></button>
-                    <button onClick={() => setBgColor('bg-white')} className="p-7 bg-white border-black border-2 rounded"></button>
-                    <button onClick={() => setBgColor('bg-green-600')} className="p-7 bg-green-600 border-black border-2 rounded"></button>
-                    <button onClick={() => setBgColor('bg-gray-600')} className="p-7 bg-gray-600 border-black border-2 rounded"></button>
+
+                  {buttonsFundo.map((button, index) => (
+                    <TemplateButton 
+                      key={index}
+                      onClick={() => {
+                        setBgColor(button.bgColor)
+                        setTextShadow((button.bgColor == "url('/fundo-transparente.png')" && textColor == '#FFFFFF') ? '0px 0px 8px rgba(0, 0, 0, 1)' : '')
+                      }}
+                      bgColor={button.bgColor}
+                    />
+                  ))}
                 </div>
               </div>
             }
@@ -278,15 +386,60 @@ export default function Edit({ params }) {
           <div className="w-full px-3 flex flex-col gap-y-6 text-white">
               <h1 className="text-xl font-bold italic">Cor do Texto:</h1>
                 <div className="grid grid-cols-5 gap-4" >
-                  <button onClick={() => {setTextColor('text-black')}} className="p-7 bg-black border-black border-2 rounded"></button>
-                  <button onClick={() => {setTextColor('text-white')}} className="p-7 bg-white border-black border-2 rounded"></button>
-                  <button onClick={() => {setTextColor('text-[#1E1E1E]')}} className="p-7 bg-[#1E1E1E] border-black border-2 rounded"></button>
-                  <button onClick={() => {setTextColor('text-gray-600')}} className="p-7 bg-gray-600 border-black border-2 rounded"></button>
-                  <button onClick={() => {setTextColor('text-gray-400')}} className="p-7 bg-gray-400 border-black border-2 rounded"></button>
+
+                  <div className="p-7 bg-gradient-to-r from-violet-600 to-pink-500 border-gray-200 border-2 rounded-2xl flex items-center justify-center relative">
+                    <input 
+                      type="color" 
+                      value={textColor}
+                      onChange={(e) => {setTextColor(e.target.value)}}
+                      className="w-10 h-10 cursor-pointer rounded-full border-2 border-gray-300 opacity-0 absolute z-10"  // Esconde o input mas mantém interativo
+                    />
+                    <Pipette className="absolute  z-0" size={30} />  {/* Ícone sobre o input */}
+                  </div>
+
+                  {textButtons.map((button, index) => (
+                    <TemplateButton 
+                      key={index}
+                      onClick={() => {setTextColor(button.textColor); setTextShadow(button.textColor === '#FFFFFF' && bgColor === "url('/fundo-transparente.png')" ? '0px 0px 8px rgba(0, 0, 0, 1)' : '')}}
+                      bgColor={button.textColor}
+                    />
+                  ))}
+
+
+
                 </div>
               </div>
           }
-          {activeSection === 'Ordem' && <p className="text-white">Ordem visível aqui...</p>}
+          {activeSection === 'Ordem' && (
+            <div className="w-full px-3 flex flex-col gap-y-6 text-white">
+              <h1 className="text-xl font-bold italic">Reordenar Informações Selecionadas:</h1>
+              <div className="grid grid-cols-1 gap-4">
+                {checkBoxInformacoes
+                  .filter(item => item.isSelect)
+                  .map((item, index, filteredItems) => (
+                    <div key={item.id} className="flex justify-between items-center bg-blue-500 p-2 rounded">
+                      <span>{item.nome}</span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => moveSelectedItem(index, -1)}
+                          disabled={index === 0}
+                          className={`px-2 py-1 rounded ${index === 0 ? 'opacity-50' : 'bg-green-500'}`}>
+                          ▲
+                        </button>
+                        <button
+                          onClick={() => moveSelectedItem(index, 1)}
+                          disabled={index === filteredItems.length - 1}
+                          className={`px-2 py-1 rounded ${index === filteredItems.length - 1 ? 'opacity-50' : 'bg-red-500'}`}>
+                          ▼
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
+
           </div>
         </div>
         
@@ -296,7 +449,7 @@ export default function Edit({ params }) {
             className="text-[#1E1E1E] font-semibold italic">
             &lt; voltar
           </button>
-          <button onClick={handleCapture} className="bg-blueMain text-white px-10 py-1.5 rounded-2xl">
+          <button onClick={PreHandleCapture} className="bg-blueMain text-white px-10 py-1.5 rounded-2xl">
             Avançar
           </button>
         </div>
