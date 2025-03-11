@@ -176,7 +176,7 @@ export default function Pos({ params }) {
   };
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center gap-y-12">
+    <div className="min-h-dvh flex flex-col items-center justify-center gap-y-12 font-inter">
       <h1 className="text-center text-3xl text-blueMain font-bold italic mt-14 w-10/12">Quais Informações deseja mostrar?</h1>
       <div className="flex flex-col w-full">
         <div className="flex flex-col gap-y-12 items-center w-full bg-blueMain rounded-3xl px-5 py-8">

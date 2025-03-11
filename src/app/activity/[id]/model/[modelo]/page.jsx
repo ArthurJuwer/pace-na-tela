@@ -27,7 +27,11 @@ export default function Modelo({ params }) {
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { imageUrl, zoom, position, shapes, updateImage, updateZoom, updatePosition } = useImage();
+  const { activity, imageUrl, zoom, position, shapes, updateImage, updateZoom, updatePosition } = useImage();
+  const [localImages, setLocalImages] = useState([]);
+  const [newImageUrl, setNewImageUrl] = useState("");
+
+
 
   const [isDragging, setIsDragging] = useState(false); 
   const [startTouch, setStartTouch] = useState(null);
@@ -60,8 +64,14 @@ export default function Modelo({ params }) {
   const closeModal = () => setIsModalOpen(false);
 
   const handleUrlSubmit = () => {
-    closeModal();
+    if (newImageUrl) {
+      updateImage(newImageUrl);
+      setLocalImages((prev) => [newImageUrl, ...prev]); // Adiciona no início
+      setNewImageUrl("");
+      closeModal();
+    }
   };
+  
 
   const handleTouchStart = (e) => {
     if (e.touches.length === 1) {
@@ -99,6 +109,33 @@ export default function Modelo({ params }) {
   };
   const shapesArray = Array.isArray(shapes) ? shapes : [];
 
+  useEffect(() => {
+    console.log(activity?.photos?.primary?.urls);
+    
+    if (!imageUrl) {
+      if (activity?.photos?.primary?.urls) {
+        const keys = Object.keys(activity.photos.primary.urls)
+          .map(Number) // Converte para número para poder comparar
+          .sort((a, b) => b - a); // Ordena em ordem decrescente
+        
+        const largestKey = keys[0]; // Pega a maior chave
+        const largestUrl = activity.photos.primary.urls[largestKey]; // Pega a URL correspondente
+        
+        console.log(largestUrl);
+        updateImage(largestUrl);
+      }
+    }
+  }, []);
+
+
+  
+  
+  
+  const [activeTab, setActiveTab] = useState('imagem'); // Estado para o menu
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
   return (
     <div className="font-inter">
       {
@@ -120,7 +157,6 @@ export default function Modelo({ params }) {
                     {/* CASO A PESSOA COLOQUE A FOTO FORA DA TELA ELA PODE ESCOLHER A COR QUE DESEJA (ATUAL BG_GRAY_600) */}
                       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl z-50" />
 
-                      
                       <div
                         className={`w-[${PHONE_WIDTH}px]  h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
                       >
@@ -159,26 +195,96 @@ export default function Modelo({ params }) {
                       </div>
                     </div>
                   </div>
-                        
               </div>
 
-              <div className="w-full flex h-12 relative">
-                <input type="text" className="w-full h-full flex bg-white rounded-lg text-sm pl-4 font-semibold placeholder:text-[#BCBCBC]" placeholder="O que você esta procurando?" />
-                <Search className="absolute transform -translate-y-1/2 top-1/2 right-4 text-[#1E1E1E]" />
-              </div>
-
-              <div className="flex flex-col gap-y-4 justify-start items-start w-full">
-                <h1 className="text-white font-semibold italic ml-1">Informações</h1>
-                <div className="grid grid-cols-2 gap-4">
-                  <Templates title='informações Strava' image={ModeloInfo} template={1} />
-                  <Templates title='informações Garmin' image={ModeloGarmin} template={2} />
-                  <Templates title='Logo Strava' image={logoStrava} template={3} />
-
-
+              <div className="font-inter">
+                {/* MENU DE SELEÇÃO */}
+                <div className="flex justify-center gap-4">
+                  <button
+                    onClick={() => handleTabChange('imagem')}
+                    className={`px-4 py-2 rounded-xl font-semibold ${activeTab === 'imagem' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                  >
+                    Imagem
+                  </button>
+                  <button
+                    onClick={() => handleTabChange('templates')}
+                    className={`px-4 py-2 rounded-xl font-semibold ${activeTab === 'templates' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                  >
+                    Templates
+                  </button>
                 </div>
-              </div>
-            </div>
+                </div>
 
+                {activeTab === 'imagem' && (
+                  <div className="grid grid-cols-3 gap-4">
+                  {/* Botão para carregar imagem */}
+                  <button
+                    onClick={openModal}
+                    className="flex items-center justify-center w-full h-32 bg-gray-300 rounded-lg hover:bg-gray-400 transition duration-200"
+                  >
+                    <span className="text-gray-700 font-semibold">Carregar Imagem</span>
+                  </button>
+
+                  {/* Renderiza imagens locais */}
+                  {localImages.map((url, index) => (
+                    <button
+                      key={`local-${index}`}
+                      onClick={() => updateImage(url)}
+                      className="flex items-center justify-center w-full h-32 bg-gray-300 rounded-lg hover:bg-gray-400 transition duration-200 overflow-hidden"
+                    >
+                      <img
+                        src={url}
+                        alt={`Imagem local ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+
+  {/* Renderiza imagens da API (Strava) */}
+  {activity?.photos?.primary?.urls &&
+    Object.keys(activity.photos.primary.urls)
+      .sort((a, b) => b - a) // Ordena pela resolução
+      .slice(0, 4) // Mostra no máximo 4 imagens
+      .map((key, index) => (
+        <button
+          key={`api-${index}`}
+          onClick={() => updateImage(activity.photos.primary.urls[key])}
+          className="flex items-center justify-center w-full h-32 bg-gray-300 rounded-lg hover:bg-gray-400 transition duration-200 overflow-hidden"
+        >
+          <img
+            src={activity.photos.primary.urls[key]}
+            alt={`Imagem API ${index + 1}`}
+            className="w-full h-full object-cover"
+          />
+        </button>
+      ))}
+</div>
+
+              )}
+
+
+                {activeTab === 'templates' && 
+                <>
+                  <div className="w-full flex h-12 relative">
+                    <input type="text" className="w-full h-full flex bg-white rounded-lg text-sm pl-4 font-semibold placeholder:text-[#BCBCBC]" placeholder="O que você esta procurando?" />
+                    <Search className="absolute transform -translate-y-1/2 top-1/2 right-4 text-[#1E1E1E]" />
+                  </div>
+
+                  <div className="flex flex-col gap-y-4 justify-start items-start w-full">
+                    <h1 className="text-white font-semibold italic ml-1">Informações</h1>
+                    <div className="grid grid-cols-2 gap-4">
+                      <Templates title='informações Strava' image={ModeloInfo} template={1} />
+                      <Templates title='informações Garmin' image={ModeloGarmin} template={2} />
+                    </div>
+                    <h1 className="text-white font-semibold italic ml-1">Strava</h1>
+                    <div className="grid grid-cols-2 gap-4">
+                      <Templates title='Logo Strava' image={logoStrava} template={3} />
+                    </div>
+                  </div>
+                </>
+                }
+
+              </div>
           </div>
           <div className="flex items-center justify-between w-full mt-6 px-4">
             <button 
@@ -200,8 +306,8 @@ export default function Modelo({ params }) {
             <h2 className="text-xl font-semibold mb-4">Digite o URL da imagem</h2>
             <input
               type="text"
-              value={imageUrl || ""}
-              onChange={(e) => updateImage(e.target.value)} // Usando o setImageUrl do contexto
+              value={newImageUrl}
+              onChange={(e) => setNewImageUrl(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg"
               placeholder="URL da imagem"
             />
@@ -209,7 +315,7 @@ export default function Modelo({ params }) {
               <button onClick={closeModal} className="text-gray-500">Cancelar</button>
               <button
                 onClick={handleUrlSubmit}
-                className="bg-blueMain text-white px-4 py-2 rounded-lg"
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
               >
                 Confirmar
               </button>

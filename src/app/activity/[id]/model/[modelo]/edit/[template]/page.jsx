@@ -307,7 +307,7 @@ const textButtons = [
   };
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center gap-y-12">
+    <div className="min-h-dvh flex flex-col items-center justify-center gap-y-12 font-inter">
       <h1 className="text-center text-3xl text-blueMain font-bold italic mt-14 w-10/12">Quais Informações deseja mostrar?</h1>
       <div className="flex flex-col w-full">
         <div className="flex flex-col gap-y-12 items-center w-full bg-blueMain rounded-3xl px-5 py-8">
@@ -318,7 +318,7 @@ const textButtons = [
           <div className="w-full flex flex-col items-center gap-10">
             <div className="w-full h-auto bg-transparent" ref={contentRef} dangerouslySetInnerHTML={{ __html: htmlContent }} />
             <section className="w-full bg-blueThird py-4 rounded-xl">
-              <ul className="flex justify-around text-white text-xs font-medium">
+              <ul className="flex justify-around text-white text-sm font-semibold">
                 <li onClick={() => toggleVisibility('Informações')}>
                   Informações
                 </li>
