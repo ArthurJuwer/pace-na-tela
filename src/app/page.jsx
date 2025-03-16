@@ -26,13 +26,32 @@ import Modal from "@/components/Home/Modal";
 export default function Home() {
 
   const [showModal, setShowModal] = useState(false)
-  
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className="flex flex-col gap-y-10 w-full font-inter">
+    <>
+    <div className={`fixed bg-blueSecond h-screen pt-32 top-0 right-0 w-3/5 shadow-md rounded-lg ${isOpen ? 'block' : 'hidden'} z-0`}>
+        <ul className="flex gap-y-10 flex-col items-center py-4 text-white">
+          <li><a href="#entrar" className="">Carregar Atividade</a></li>
+          <li><a href="#diferenciais" className="">Diferenciais</a></li>
+          <li><a href="#integracoes" className="">Integrações</a></li>
+          <li><a href="#integracoes" className="">Rodapé</a></li>
+          <li><a href="#entrar" className="">Entrar</a></li>
+          <li><a href="#integracoes" className="">Sobre</a></li>
+        </ul>
+      </div>
+
+    <div className={"flex flex-col gap-y-10 w-full font-inter"}>
 
       <header className="flex items-center justify-between p-10 pb-0">
         <Image src={Logo} width={100} height={100} alt="logo pace na tela" className="w-auto h-auto" />
-        <MenuHamburger />
+        <MenuHamburger onClick={toggleMenu} isOpen={isOpen} />
+
+      
       </header>
 
       <Image src={Main} className="w-full h-auto" alt="logo pace na tela" priority={true} />
@@ -121,5 +140,6 @@ export default function Home() {
         </div>
       </footer>
     </div>
+    </>
   );
 }

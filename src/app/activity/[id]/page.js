@@ -109,7 +109,8 @@ const Activity = ({params}) => {
           className="text-[#1E1E1E] font-semibold italic">
           &lt; voltar
         </button>
-        <Link 
+        <Link
+           
           href={
               Object.keys(selectedPosts).length > 1 
               ? `/activity/${id}/model/ambos` : 
