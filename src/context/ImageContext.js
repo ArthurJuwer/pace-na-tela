@@ -8,7 +8,6 @@ export const ImageProvider = ({ children }) => {
   const [zoom, setZoom] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [shapes, setShapes] = useState([]); 
-  // TROCAR AQUI PARA ARRAY
   const [atualTemplate, setAtualTemplate] = useState({}); 
   const [activity, setActivity] = useState({}); 
 
@@ -19,8 +18,6 @@ export const ImageProvider = ({ children }) => {
   const updateShapes = (newShapes) => setShapes(newShapes);
   const updateAtualTemplate = (newTemplate) => setAtualTemplate(newTemplate);
   const updateActivity = (newActivity) => setActivity(newActivity);
-
-
 
   return (
     <ImageContext.Provider

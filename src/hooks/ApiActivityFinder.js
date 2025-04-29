@@ -18,7 +18,7 @@ export function useActivityFetcher(id) {
 
         resetarContext(); // Resetando antes de atualizar com a nova atividade
         updateActivity(response.data);
-
+        console.log(response.data)
       } catch (err) {
         setError(err.response?.data || { message: 'Erro ao buscar a atividade.' });
       }

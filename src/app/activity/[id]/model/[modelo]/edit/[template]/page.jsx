@@ -7,6 +7,9 @@ import useFormatValue from "@/hooks/useFormatValue"; // Ajuste o caminho conform
 import logoStrava from "../../../../../../../../public/strava-logo-0.png"
 // SUBSTITUIR NO FUTURO POR HTML,TAILWID
 
+import { toPng } from 'html-to-image';
+
+
 import { useImage } from "@/context/ImageContext";
 import { redirect } from "next/navigation";
 import TemplateButton from "@/components/Activity/TemplateButton";
@@ -34,7 +37,7 @@ export default function Edit({ params }) {
     { id: "start_date", nome: "Data e Hora de Início", isSelect: false, value: undefined, type: "date" },
     { id: "athlete_count", nome: "Contagem de Atletas", isSelect: false, value: undefined, type: "number" },
     { id: "pr_count", nome: "Contagem de PRs", isSelect: false, value: undefined, type: "number" },
-    { id: "trainer", nome: "Treinador", isSelect: false, value: undefined, type: "boolean" },
+    // { id: "trainer", nome: "Treinador", isSelect: false, value: undefined, type: "boolean" },
     { id: "kudos_count", nome: "Kudos", isSelect: false, value: undefined, type: "number" },
     { id: "location_city", nome: "Cidade", isSelect: false, value: undefined, type: "string" },
     { id: "location_state", nome: "Estado", isSelect: false, value: undefined, type: "string" },
@@ -209,14 +212,14 @@ const textButtons = [
         return `
           <div class="text-center">
             <p class="text-xs text-gray-500">${item.nome}</p>
-            <p class="text-xl font-bold" style="color:${textColor};text-shadow:${textShadow}">${item.value}</p>
+            <p style="font-size: 20px; font-weight: bold;color:${textColor};text-shadow:${textShadow}">${item.value}</p>
           </div>
         `;
       }).join('');
       
       
       const wrappedContent = `
-  <div class="w-full grid grid-cols-2 gap-6 p-8 rounded-3xl" style="background:${bgColor}">
+  <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:24px; padding:32px; border-radius:24px; background:${bgColor}">
       ${content}
   </div>
 `;
@@ -225,24 +228,28 @@ const textButtons = [
       setHtmlContent(wrappedContent); 
     } else if (Number(template) === 2) {
       const content = selectedItems.map((item, index) => {
+        const borderColor = index === 1 ? 'orange' : index === 2 ? 'blue' : 'green';
+        const marginClass = index === 1 ? '-ml-5 -mr-5 z-50 mb-16' : 'z-0';
+    
         return `
-          <div class="relative flex items-center justify-center w-28 h-28 border-4 border-${index === 1 ? 'orange' : index === 2 ? 'blue' : 'green'}-500 rounded-full ${index === 1 ? ' -ml-5 -mr-5 z-50' : 'z-0'}">
+          <div class="relative flex items-center justify-center w-28 h-28 border-4 border-${borderColor}-500 rounded-full ${marginClass}" style="background: ${bgColor};">
             <div class="text-center">
-              <p class="text-xl font-bold" style="color:${textColor};text-shadow:${textShadow}">${item.value}</p>
+              <p class="text-xl" style="color: ${textColor}; text-shadow: ${textShadow};">${item.value}</p>
               <p class="text-xs text-gray-500">${item.nome}</p>
             </div>
           </div>
         `;
-      }).join(''); 
-
+      }).join('');
+    
       const wrappedContent = `
-      <div class="mx-2 flex items-center justify-center p-8 rounded-3xl w-full" style="background:${bgColor}">
+        <div class="mx-2 flex items-center justify-center p-8 rounded-3xl w-full" style="background: ${bgColor};">
           ${content}
-      </div>
-    `;
-
-      setHtmlContent(wrappedContent); 
-    } 
+        </div>
+      `;
+    
+      setHtmlContent(wrappedContent);
+    }
+    
     
     else if (Number(template) === 3) {
       handleCapture({
@@ -279,31 +286,41 @@ const textButtons = [
       redirect(`${template}/pos`);
     }
     
-    if (contentRef.current) {
-      
-      html2canvas(contentRef.current, {
-        backgroundColor: null,
-        useCORS: true
-      }).then((canvas) => {
-        const imgData = canvas.toDataURL("image/png"); 
-        const scaleFactor = maxWidth / canvas.width;
 
-        let generatedName = ''
+
+if (contentRef.current) {
+  toPng(contentRef.current)
+    .then((imgData) => {
+      const image = new Image();
+      image.src = imgData;
+
+      const tempImage = new Image();
+      tempImage.onload = () => {
+        const scaleFactor = maxWidth / tempImage.width;
+
+        let generatedName = '';
         if (Number(template) === 1) {
-          generatedName = 'info_strava'
-        } else if(Number(template) === 2){
-          generatedName = 'info_garmin'
+          generatedName = 'info_strava';
+        } else if (Number(template) === 2) {
+          generatedName = 'info_garmin';
         }
 
         updateAtualTemplate({
           src: imgData,
           width: maxWidth,
-          height: Math.round(canvas.height * scaleFactor),
+          height: Math.round(tempImage.height * scaleFactor),
           name: generatedName
         });
+
         redirect(`${template}/pos`);
-      });
-    }
+      };
+      tempImage.src = imgData;
+    })
+    .catch((error) => {
+      console.error('Erro ao gerar imagem:', error);
+    });
+}
+
   };
 
   return (

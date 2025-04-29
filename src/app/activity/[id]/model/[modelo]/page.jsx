@@ -31,7 +31,11 @@ export default function Modelo({ params }) {
   const [localImages, setLocalImages] = useState([]);
   const [newImageUrl, setNewImageUrl] = useState("");
 
-
+  const templates = [
+    {id: 1, title:"informações Strava", image: ModeloInfo, tags: ["info", "strava"]},
+    {id: 2, title:"informações Garmin", image: ModeloGarmin, tags: ["info"]},
+    {id: 3, title:"Logo Strava", image: logoStrava, tags: ["strava"]},
+  ]
 
   const [isDragging, setIsDragging] = useState(false); 
   const [startTouch, setStartTouch] = useState(null);
@@ -110,15 +114,14 @@ export default function Modelo({ params }) {
   const shapesArray = Array.isArray(shapes) ? shapes : [];
 
   useEffect(() => {
-    console.log(activity?.photos?.primary?.urls);
     
     if (!imageUrl) {
       if (activity?.photos?.primary?.urls) {
         const keys = Object.keys(activity.photos.primary.urls)
-          .map(Number) // Converte para número para poder comparar
-          .sort((a, b) => b - a); // Ordena em ordem decrescente
+          .map(Number) 
+          .sort((a, b) => b - a); 
         
-        const largestKey = keys[0]; // Pega a maior chave
+        const largestKey = keys[0];
         const largestUrl = activity.photos.primary.urls[largestKey]; // Pega a URL correspondente
         
         console.log(largestUrl);
@@ -132,6 +135,8 @@ export default function Modelo({ params }) {
   
   
   const [activeTab, setActiveTab] = useState('imagem'); // Estado para o menu
+  const [search, setSearch] = useState(''); // Estado para o menu
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
@@ -259,26 +264,55 @@ export default function Modelo({ params }) {
         </button>
       ))}
 </div>
-
               )}
-
 
                 {activeTab === 'templates' && 
                 <>
                   <div className="w-full flex h-12 relative">
-                    <input type="text" className="w-full h-full flex bg-white rounded-lg text-sm pl-4 font-semibold placeholder:text-[#BCBCBC]" placeholder="O que você esta procurando?" />
+                    <input 
+                      type="text" 
+                      className="w-full h-full flex bg-white rounded-lg text-sm pl-4 font-semibold placeholder:text-[#BCBCBC]" 
+                      placeholder="O que você esta procurando?" 
+                      onChange={(e) => setSearch(e.target.value)}
+                      value={search}
+                    />
                     <Search className="absolute transform -translate-y-1/2 top-1/2 right-4 text-[#1E1E1E]" />
                   </div>
 
                   <div className="flex flex-col gap-y-4 justify-start items-start w-full">
                     <h1 className="text-white font-semibold italic ml-1">Informações</h1>
                     <div className="grid grid-cols-2 gap-4">
-                      <Templates title='informações Strava' image={ModeloInfo} template={1} />
-                      <Templates title='informações Garmin' image={ModeloGarmin} template={2} />
+                    {templates
+                      .filter((item) => 
+                        item.title.toLowerCase().includes(search.toLowerCase()) &&
+                        item.tags.some((tag) => tag.includes("info")) 
+                      )
+                      .map((item, _) => (
+                        <Templates 
+                          key={item.id} 
+                          title={item.title} 
+                          image={item.image} 
+                          template={item.id} 
+                        />
+                      ))
+                    }
                     </div>
                     <h1 className="text-white font-semibold italic ml-1">Strava</h1>
                     <div className="grid grid-cols-2 gap-4">
-                      <Templates title='Logo Strava' image={logoStrava} template={3} />
+                    {templates
+                      .filter((item) => 
+                        item.title.toLowerCase().includes(search.toLowerCase()) &&
+                        item.tags.some((tag) => tag.includes("strava")) 
+                      )
+                      .map((item, _) => (
+                        <Templates 
+                          key={item.id} 
+                          title={item.title} 
+                          image={item.image} 
+                          template={item.id} 
+                        />
+                      ))
+                    }
                     </div>
                   </div>
                 </>
