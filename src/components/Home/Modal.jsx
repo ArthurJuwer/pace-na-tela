@@ -48,10 +48,15 @@ export default function Modal({ closeModal }) {
                 <span className="block w-full h-1 bg-blueMain"></span>
             </div>
             <div className="flex flex-col gap-y-4">
-                <div className="bg-[#8C9BBC] p-3 rounded-xl flex items-center gap-x-5">
-                    <Image src={LogoStrava} className="h-8 w-auto" alt="logo strava" />
-                    <h1 className="text-center text-white font-semibold">Entrar com Strava</h1>
-                </div>
+
+                {/* ARRUMAR AQUI */}
+
+                <a href="/account/home">
+                    <div className="bg-[#8C9BBC] p-3 rounded-xl flex items-center gap-x-5">
+                        <Image src={LogoStrava} className="h-8 w-auto" alt="logo strava" />
+                        <h1 className="text-center text-white font-semibold">Entrar com Strava</h1>
+                    </div>
+                </a>
                 <div className="bg-[#8C9BBC] p-3 rounded-xl flex items-center gap-x-5">
                     <Image src={LogoAdidas} className="h-8  w-auto" alt="logo adidas" />
                     <h1 className="text-center text-white font-semibold">Entrar com Adidas RUN</h1>
