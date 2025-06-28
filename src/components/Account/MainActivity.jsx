@@ -4,7 +4,7 @@ import Mapa from '../../../public/map.png'
 
 function MainActivity() {
   return (
-    <div className='font-inter italic w-[90%] bg-[#D9D9D9] rounded-3xl p-6 flex justify-between'>
+    <div className='italic w-[90%] bg-[#D9D9D9] rounded-3xl p-6 flex justify-between'>
         <div className="flex flex-col gap-y-5">
             <div className="flex flex-col gap-y-3">
                 <h1 className='text-2xl font-bold '>Atividade</h1>
