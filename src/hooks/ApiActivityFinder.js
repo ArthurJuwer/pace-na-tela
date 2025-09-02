@@ -14,7 +14,7 @@ export function useActivityFetcher(id) {
         const token = process.env.NEXT_PUBLIC_STRAVA_TOKEN;
         const response = await axios.get(`https://www.strava.com/api/v3/activities/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
-        });
+        })
 
         resetarContext(); // Resetando antes de atualizar com a nova atividade
         updateActivity(response.data);
