@@ -20,7 +20,7 @@ import PostsDivertidos from "../../public/postsdivertidos.png";
 import MenuHamburger from "@/components/MenuHamburger";
 import AppIntegrationInfo from "@/components/Home/AppIntegrationInfo";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "@/components/Home/Modal";
 
 export default function Home() {
@@ -43,10 +43,10 @@ export default function Home() {
           <li><a href="#entrar" className="">Entrar</a></li>
           <li><a href="#integracoes" className="">Sobre</a></li>
         </ul>
-      </div>
+    </div>
 
     <div className={"flex flex-col gap-y-10 w-full font-inter"}>
-
+    
       <header className="flex items-center justify-between p-10 pb-0">
         <Image src={Logo} width={100} height={100} alt="logo pace na tela" className="w-auto h-auto" />
         <MenuHamburger onClick={toggleMenu} isOpen={isOpen} />
