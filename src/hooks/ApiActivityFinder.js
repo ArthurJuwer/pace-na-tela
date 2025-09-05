@@ -10,9 +10,11 @@ export function useActivityFetcher(id) {
 
     const fetchActivity = async () => {
       try {
+
         const res = await fetch(`/api/activity/${id}`);
         if (!res.ok) throw new Error('Erro ao buscar atividade');
         const data = await res.json();
+
 
         resetarContext();
         updateActivity(data);
