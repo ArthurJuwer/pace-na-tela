@@ -9,12 +9,12 @@ export default function HomeDesktop() {
             <header className="border-b-2 flex border-[#C7CBCE] w-[90vw] h-20 justify-around">
             <Image src={Logo} alt="logo pace na tela" className="w-20 h-20" />
             
-            <ul className="flex cursor-pointer justify-center items-center ml-20 gap-10 font-light">
-                <li className="hover:text-[#02277C] transition">Diferenciais</li>
-                <li className="hover:text-[#02277C] transition">Integrações</li>
-                <li className="hover:text-[#02277C] transition">Rodapé</li>
-                <li className="hover:text-[#02277C] transition">Sobre</li>
-                <li className="hover:text-[#02277C] transition">Entrar</li>
+            <ul className="flex justify-center items-center ml-20 gap-10 font-light">
+                <li className="hover:text-[#02277C] cursor-pointer transition">Diferenciais</li>
+                <li className="hover:text-[#02277C] cursor-pointer transition">Integrações</li>
+                <li className="hover:text-[#02277C] cursor-pointer transition">Rodapé</li>
+                <li className="hover:text-[#02277C] cursor-pointer transition">Sobre</li>
+                <li className="hover:text-[#02277C] cursor-pointer transition">Entrar</li>
             </ul>
 
             <div className="flex items-center">
@@ -23,8 +23,8 @@ export default function HomeDesktop() {
 
             </header>
 
-            <div className="hero flex gap-5 flex-col font-stretch-expanded tracking-wider text-4xl font-extrabold text-center justify-center items-center">
-                <h1 className="mt-10">UMA NOVA FORMA DE<br/><span className="mt-2 mb-2 block border-2 border-[#C7CBCE] rounded-full p-3">COMPARTILHAR</span>SUAS CORRIDAS</h1>
+            <div className="hero flex gap-5 flex-col font-stretch-expanded tracking-wider text-5xl font-extrabold text-center justify-center items-center">
+                <h1 className="mt-10">UMA NOVA FORMA DE<br/><span className="mt-2 mb-2 block border-2 border-[#C7CBCE] rounded-full p-3">COMPARTILHAR SUAS CORRIDAS</span></h1>
                 <RunningCard />
             </div>
         </div>
