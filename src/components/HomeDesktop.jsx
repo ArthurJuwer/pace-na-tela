@@ -22,8 +22,10 @@ export default function HomeDesktop() {
 
             </header>
 
-            <div className="hero flex text-5xl font-extrabold text-center justify-center items-center">
-                <h1 className="mt-10">UMA NOVA FORMA<br/><h1 className="mt-5 border-2 border-[#C7CBCE] rounded-full p-5">DE COMPARTILHAR</h1><br/>SUAS CORRIDAS</h1>
+            // resto da pagina 
+            
+            <div>
+
             </div>
         </div>
     )
