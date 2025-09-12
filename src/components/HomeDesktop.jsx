@@ -76,7 +76,7 @@ export default function HomeDesktop() {
                 </div>
 
                 {/* coluna 3 (em cima à direita) */}
-                <div className="absolute right-28 top-12 md:top-44 md:right-4 2xl:top-28 2xl:right-72 font-bold max-w-md">
+                <div className="absolute right-28 top-12 md:top-12 md:right-28 2xl:top-28 2xl:right-72 font-bold max-w-md">
                     <div className="flex">
                         <AutoAwesomeIcon fontSize='large' className="text-[#1D6BC3] mr-5" />
                         <h1 className="text-2xl 2xl:text-3xl">
