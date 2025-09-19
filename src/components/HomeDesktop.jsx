@@ -3,6 +3,7 @@
 import LogoStrava from "../../public/redes-sociais/Strava.svg"
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Image from "next/image"
+import ModalDesktop from "./Home/ModalDesktop";
 import Logo from "../../public/logo-pacenatela.svg";
 import Main from "../../public/main.png";
 import RunningCard from "./Home/RunningCard";
@@ -36,15 +37,15 @@ export default function HomeDesktop() {
                     {showModal && (
                         <>
                             <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
-                            <Modal key={'modal'} closeModal={setShowModal} />
+                            <ModalDesktop key={'modal'} closeModal={setShowModal} />
                         </>
                     )}
                 </div>
 
             </header>
 
-            <div className="hero flex gap-5 flex-col text-5xl 2xl:text-7xl font-extrabold text-center justify-center items-center">
-                <h1 className="mt-10 block 2xl:hidden">
+            <div className="hero flex gap-5 flex-col text-4xl 2xl:text-7xl font-extrabold text-center justify-center items-center">
+                <h1 className="mt-5 2xl:mt-10 block 2xl:hidden">
                     UMA NOVA FORMA DE
                     <br />
                     <span className="mt-2 mb-12 block border-2 border-[#C7CBCE] rounded-full p-3">
@@ -61,7 +62,7 @@ export default function HomeDesktop() {
                     <span className="block">SUAS CORRIDAS</span>
                 </h1>
             </div>
-            <div className="w-screen h-screen relative flex items-center justify-center">
+            <div className="w-screen mb-10 2xl:mb-0 h-screen relative flex items-center justify-center">
                 <div className="z-10">
                     <RunningCard />
                 </div>
@@ -76,7 +77,7 @@ export default function HomeDesktop() {
                 </div>
 
                 {/* coluna 3 (em cima à direita) */}
-                <div className="absolute right-28 top-12 md:top-12 md:right-28 2xl:top-28 2xl:right-72 font-bold max-w-md">
+                <div className="absolute right-20 2xl:top-28 2xl:right-72 font-bold max-w-md">
                     <div className="flex">
                         <AutoAwesomeIcon fontSize='large' className="text-[#1D6BC3] mr-5" />
                         <h1 className="text-2xl 2xl:text-3xl">
