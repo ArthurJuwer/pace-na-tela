@@ -4,6 +4,9 @@ import Image from "next/image";
 import Logo from "../../public/logo-pacenatela.svg";
 import LogoBranca from "../../public/logobranca-pacenatela.svg";
 
+import pwrdByStrava from "../../public/api_logo_pwrdBy_strava_horiz_white.png";
+import cptblWithStrava from "../../public/api_logo_cptblWith_strava_horiz_white.png";
+
 import LogoAdidas from "../../public/logo-apps-integracao/Adidas.svg"
 import LogoAsics from "../../public/logo-apps-integracao/Asics.svg"
 import LogoStrava from "../../public/logo-apps-integracao/Strava.svg"
@@ -98,22 +101,22 @@ export default function Home() {
       </div>
       <Image src={PostsDivertidos} className="w-full h-auto px-4" alt="logo pace na tela" />
 
-      <div className="bg-blueMain flex justify-center items-center p-8">
+      {/* <div className="bg-blueMain flex justify-center items-center p-8">
         <h1 className="text-white text-center text-2xl font-bold w-10/12 italic">Quais apps o Pace na Tela tem integração?</h1>
-      </div>
+      </div> */}
 
       <section id="integracoes" className="w-11/12 mx-auto grid grid-cols-4 place-content-center place-items-center gap-6">
-        <Image src={LogoStrava} height={40} className="w-48 h-auto" alt="logo Strava" />
+        {/* <Image src={LogoStrava} height={40} className="w-48 h-auto" alt="logo Strava" />
         <Image src={LogoAdidas} height={40} className="w-48 h-auto" alt="logo Adidas" />
         <Image src={LogoUnder} height={40} className="w-48 h-auto" alt="logo Under Armour" />
-        <Image src={LogoAsics} height={40} className="w-48 h-auto" alt="logo Asics" />
+        <Image src={LogoAsics} height={40} className="w-48 h-auto" alt="logo Asics" /> */}
       </section>
 
       <section  className="flex flex-col gap-5 items-center justify-center w-11/12 mx-auto">
-        <AppIntegrationInfo image={LogoStrava} name={'Strava'} index={0}/>
+        {/* <AppIntegrationInfo image={LogoStrava} name={'Strava'} index={0}/>
         <AppIntegrationInfo image={LogoAdidas} name={'Adidas RUNTASTIC'} index={1}/>
         <AppIntegrationInfo image={LogoUnder}  name={'Under Armour RUN'} index={2}/>
-        <AppIntegrationInfo image={LogoAsics}  name={'Asics RUN'} index={3}/>
+        <AppIntegrationInfo image={LogoAsics}  name={'Asics RUN'} index={3}/> */}
       </section>
 
       <footer className="bg-[#8C9BBC] w-full p-10 flex flex-col gap-y-8">
@@ -124,7 +127,7 @@ export default function Home() {
               <Image src={LogoIconeInstagram} width={25} height={25} alt="logo instagram" className="w-auto h-auto" />
             </div>
             <div className="bg-white size-12 rounded-full flex items-center justify-center">
-              <Image src={LogoIconeStrava} width={25} height={25} alt="logo strava" className="w-auto h-auto"/>
+              {/* <Image src={LogoIconeStrava} width={25} height={25} alt="logo strava" className="w-auto h-auto"/> */}
             </div>
           </div>
         </div>
@@ -135,8 +138,13 @@ export default function Home() {
           <Link href={'#integracoes'} className="text-white font-medium text-center">Integrações</Link>
         </ul>
         </nav>
-        <div className="flex items-center justify-center ">
+        <div className="flex flex-col items-center justify-center ">
           <h3 className="text-[#8C9BBC] bg-white rounded-full font-medium px-8 py-3 text-center">© Copyright 2025 Arthur Juwer</h3>
+          <div className="flex mt-10 gap-5">
+            <Image className="w-40 " src={pwrdByStrava} alt="Logo Strava" />
+            <Image className="w-40"src={cptblWithStrava} alt="Logo Strava" />
+          </div>
+          
         </div>
       </footer>
     </div>
