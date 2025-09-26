@@ -1,17 +1,19 @@
 <div align="center">
-  <img src="https://gradeup.com.br/wp-content/uploads/2015/09/Captura-de-tela-2024-06-18-155403.png" alt="Logo" />
+  <img src="public/logo-pacenatela.svg" alt="Logo" />
 
-  <h1>Pace na tela</h1>
+  <br>
+  <br>
 
-  <a href="https://choosealicense.com/licenses/mit/">
-    <img src="" alt="MIT License" />
-  </a>
-  <a href="https://opensource.org/licenses/">
-    <img src="" alt="GPLv3 License" />
-  </a>
-  <a href="http://www.gnu.org/licenses/agpl-3.0">
-    <img src="" alt="AGPL License" />
-  </a>
+  <p align="center">
+  <a href="https://opensource.org/licenses/MIT" alt="License">
+        <img src="https://img.shields.io/badge/license-GPLv3-blue" /></a>
+  <a href="https://github.com/simonoppowa/OpenNutriTracker/stargazers" alt="GitHub Stars">
+        <img src="https://img.shields.io/github/stars/simonoppowa/OpenNutriTracker.svg" /></a>
+  <a href="https://github.com/simonoppowa/OpenNutriTracker/issues" alt="GitHub Issues">
+        <img src="https://img.shields.io/github/issues/simonoppowa/OpenNutriTracker.svg" /></a>
+  <a href="https://github.com/simonoppowa/OpenNutriTracker/pulls" alt="GitHub Pull Requests">
+        <img src="https://img.shields.io/github/issues-pr/simonoppowa/OpenNutriTracker.svg" /></a>
+</p>
 </div>
 
 <h2>Descrição</h2>
