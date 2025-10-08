@@ -2,6 +2,7 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get('code');
 
+  
   const clientId = process.env.STRAVA_CLIENT_ID;
   const clientSecret = process.env.STRAVA_CLIENT_SECRET;
   const redirectUri = process.env.STRAVA_REDIRECT_URI;
@@ -24,7 +25,7 @@ export async function GET(req) {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: '/account/home',
+        Location: '/account/home', // SERA REDIRECIONADO PARA CÁ
         'Set-Cookie': `access_token=${data.access_token}; Path=/; HttpOnly`,
       },
     });

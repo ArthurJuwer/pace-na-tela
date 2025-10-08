@@ -1,6 +1,6 @@
+'use client'
 import CardAtividade from '@/components/Account/Atividades/CardAtividade'
 import MainActivity from '@/components/Account/MainActivity'
-import React from 'react'
 
 export default function Atividades() {
   return (

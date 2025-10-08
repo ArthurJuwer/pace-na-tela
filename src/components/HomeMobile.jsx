@@ -21,7 +21,7 @@ import MenuHamburger from "@/components/MenuHamburger";
 import AppIntegrationInfo from "@/components/Home/AppIntegrationInfo";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import Modal from "@/components/Home/Modal";
+import ModalDesktop from "./Home/ModalDesktop";
 
 export default function HomeMobile() {
   const [showModal, setShowModal] = useState(false)
@@ -58,7 +58,7 @@ export default function HomeMobile() {
         {showModal && (
           <>
             <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
-            <Modal key={'modal'} closeModal={setShowModal}/>
+            <ModalDesktop key={'modal'} closeModal={setShowModal}/>
           </>
         )}
 

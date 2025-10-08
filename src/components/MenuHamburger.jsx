@@ -5,7 +5,7 @@ export default function MenuHamburger() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="h-[65px] flex items-center px-6 relative z-50">
+    <nav className="h-[65px] flex items-center lg:px-6 relative z-50">
 
       <div className="relative">
         <button

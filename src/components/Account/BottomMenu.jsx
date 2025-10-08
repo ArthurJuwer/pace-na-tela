@@ -11,7 +11,7 @@ const itensMenu = [
 
 function BottomMenu() {
   return (
-    <div className="bg-[#02277C] w-[90%] rounded-full p-6 absolute bottom-12 transform -translate-x-1/2 left-1/2 flex justify-around">
+    <div className="bg-[#02277C] w-[90%] rounded-full p-6 fixed bottom-12 transform -translate-x-1/2 left-1/2 flex justify-around shadow-xl">
       {itensMenu.map((item, index) => {
         let Icon = item.icon
         return (

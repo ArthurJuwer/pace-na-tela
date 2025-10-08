@@ -26,7 +26,7 @@ export default function Home() {
                 <h1 className="text-blueMain text-2xl font-bold w-11/12 italic">Carregar Atividade</h1>
                 <p className="text-blueSecond text-xs font-medium w-11/12">Link da atividade do STRAVA</p>
             </div>
-            <div className="w-full relative">
+            <div className="w-11/12 relative">
                 <input
                     type="text"
                     className="border border-blueMain rounded-xl p-3.5 w-full placeholder:italic placeholder:text-[#8C9BBC] text-xs"
