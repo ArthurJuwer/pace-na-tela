@@ -28,7 +28,7 @@
 </pre>
 
 <h2>Screenshots</h2>
-<img src="https://via.placeholder.com/468x300?text=App+Screenshot+Here" alt="App Screenshot" />
+<img src="./public/readme/ScreensAPP.png" alt="App Screenshot" />
 
 <h2>Demonstração</h2>
 <p>GIF</p>
