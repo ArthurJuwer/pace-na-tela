@@ -240,27 +240,36 @@ export const posts = [
   },
 ];
 
+function seededShuffle(arr, seed) {
+  const a = [...arr];
+  let s = seed;
+  for (let i = a.length - 1; i > 0; i--) {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    const j = Math.abs(s) % (i + 1);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 /**
- * Seleciona o post interativo mais adequado para a atividade.
- * Usa o ID da atividade como semente para escolha determinística entre posts compatíveis.
+ * Retorna até `max` posts interativos compatíveis com a atividade,
+ * em ordem determinística baseada no ID da atividade.
  */
-export function selectPost(activity) {
-  if (!activity) return posts[0];
+export function selectPosts(activity, max = 3) {
+  if (!activity) return [posts[0]];
 
   const sportType = activity.sport_type || activity.type || 'Run';
+  const seed = Number(String(activity.id || 0).slice(-6)) || 42;
 
   const matching = posts.filter(
     (p) => p.sportTypes.includes(sportType) && p.condition(activity)
   );
 
-  if (!matching.length) {
-    // Fallback: qualquer post cuja condição bate, sem filtro de esporte
-    const fallback = posts.filter((p) => p.condition(activity));
-    if (!fallback.length) return posts[0];
-    const seed = Number(String(activity.id || 0).slice(-4)) || 0;
-    return fallback[seed % fallback.length];
-  }
+  const pool = matching.length
+    ? matching
+    : posts.filter((p) => p.condition(activity));
 
-  const seed = Number(String(activity.id || 0).slice(-4)) || 0;
-  return matching[seed % matching.length];
+  if (!pool.length) return [posts[0]];
+
+  return seededShuffle(pool, seed).slice(0, Math.min(max, pool.length));
 }

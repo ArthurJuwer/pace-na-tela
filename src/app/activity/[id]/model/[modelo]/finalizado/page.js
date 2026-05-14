@@ -4,12 +4,16 @@ import Link from "next/link";
 import React, { useRef, useCallback, useEffect, useState } from "react";
 import { toPng } from 'html-to-image';
 import { useImage } from "@/context/ImageContext";
-import { selectPost } from "@/data/postsInterativos";
+import { selectPosts } from "@/data/postsInterativos";
 
 export default function FinalizadoPage({ params }) {
   const { id, modelo } = React.use(params);
   const { imageUrl, zoom, position, shapes, activity } = useImage();
   const [athlete, setAthlete] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const dragStartX = useRef(null);
 
   const PHONE_WIDTH = 230;
   const PHONE_HEIGHT = 479;
@@ -25,7 +29,36 @@ export default function FinalizadoPage({ params }) {
       .catch(() => {});
   }, [modelo]);
 
-  const selectedPost = modelo === 'interativo' ? selectPost(activity) : null;
+  const interativoPosts = modelo === 'interativo' ? selectPosts(activity, 3) : [];
+  const selectedPost = interativoPosts[activeIndex] ?? null;
+
+  const onDragStart = (x) => {
+    if (interativoPosts.length <= 1) return;
+    dragStartX.current = x;
+    setDragging(true);
+  };
+
+  const onDragMove = (x) => {
+    if (!dragging || dragStartX.current === null) return;
+    const delta = x - dragStartX.current;
+    const atStart = activeIndex === 0 && delta > 0;
+    const atEnd = activeIndex === interativoPosts.length - 1 && delta < 0;
+    const resistance = atStart || atEnd ? 0.25 : 1;
+    setDragOffset(Math.max(-160, Math.min(160, delta * resistance)));
+  };
+
+  const onDragEnd = () => {
+    if (!dragging) return;
+    const threshold = 60;
+    if (dragOffset < -threshold && activeIndex < interativoPosts.length - 1) {
+      setActiveIndex(i => i + 1);
+    } else if (dragOffset > threshold && activeIndex > 0) {
+      setActiveIndex(i => i - 1);
+    }
+    setDragOffset(0);
+    setDragging(false);
+    dragStartX.current = null;
+  };
 
   const handleDownload = useCallback((ref) => {
     if (!ref.current) return;
@@ -88,12 +121,8 @@ export default function FinalizadoPage({ params }) {
                   </div>
                 </div>
               </div>
-              <div className="flex gap-5 items-center justify-center">
-                <div className="size-2.5 rounded-full bg-white"></div>
-                <div className="size-2.5 rounded-full bg-[#013E9D]"></div>
-                <div className="size-2.5 rounded-full bg-[#013E9D]"></div>
-                <div className="size-2.5 rounded-full bg-[#013E9D]"></div>
-                <div className="size-2.5 rounded-full bg-[#013E9D]"></div>
+              <div className="flex gap-3 items-center justify-center">
+                <div className="size-3 rounded-full bg-white" />
               </div>
               <h3 className="text-white text-sm font-semibold italic">Compartilhe sua corrida - Tag @pacenatela</h3>
               <div className="flex gap-x-10">
@@ -139,6 +168,23 @@ export default function FinalizadoPage({ params }) {
             </div>
 
             <div className="flex flex-col gap-y-8 items-center justify-center w-full">
+              {/* Swipe wrapper */}
+              <div
+                onTouchStart={(e) => onDragStart(e.touches[0].clientX)}
+                onTouchMove={(e) => onDragMove(e.touches[0].clientX)}
+                onTouchEnd={onDragEnd}
+                onMouseDown={(e) => onDragStart(e.clientX)}
+                onMouseMove={(e) => onDragMove(e.clientX)}
+                onMouseUp={onDragEnd}
+                onMouseLeave={onDragEnd}
+                style={{
+                  transform: `translateX(${dragOffset}px)`,
+                  transition: dragging ? 'none' : 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
+                  cursor: interativoPosts.length > 1 ? (dragging ? 'grabbing' : 'grab') : 'default',
+                  userSelect: 'none',
+                  touchAction: 'pan-y',
+                }}
+              >
               {/* Post card — export ready */}
               <div
                 ref={interativoCardRef}
@@ -231,13 +277,18 @@ export default function FinalizadoPage({ params }) {
                   <img src="/logo-pacenatela.svg" alt="" style={{ height: 13, width: 'auto', opacity: 0.3 }} />
                 </div>
               </div>
+              </div>{/* end swipe wrapper */}
 
-              <div className="flex gap-5 items-center justify-center">
-                <div className="size-2.5 rounded-full bg-white"></div>
-                <div className="size-2.5 rounded-full bg-[#013E9D]"></div>
-                <div className="size-2.5 rounded-full bg-[#013E9D]"></div>
-                <div className="size-2.5 rounded-full bg-[#013E9D]"></div>
-                <div className="size-2.5 rounded-full bg-[#013E9D]"></div>
+              <div className="flex gap-3 items-center justify-center">
+                {interativoPosts.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveIndex(i)}
+                    className={`rounded-full transition-all duration-200 ${
+                      i === activeIndex ? 'size-3 bg-white' : 'size-2.5 bg-[#013E9D]'
+                    }`}
+                  />
+                ))}
               </div>
               <h3 className="text-white text-sm font-semibold italic">Compartilhe sua corrida - Tag @pacenatela</h3>
 
