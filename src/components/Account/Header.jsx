@@ -6,8 +6,8 @@ import { BoltIcon } from 'lucide-react'
 function Header() {
   return (
     <div className='p-10 flex justify-between items-center'>
-        <Image src={Logo} alt='' width={120} height={120}/>
-        <BoltIcon width={40} height={40}/>
+        <Image src={Logo} alt='' width={100} height={100}/>
+        <BoltIcon width={28} height={28}/>
     </div>
   )
 }

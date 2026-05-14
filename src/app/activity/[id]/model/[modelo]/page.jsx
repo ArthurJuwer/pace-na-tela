@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useImage } from '@/context/ImageContext'; // Importa o hook do contexto
+import { useImage } from '@/context/ImageContext';
 
 import ModeloInfo from "../../../../../../public/informacoesStrava.svg";
 import ModeloGarmin from "../../../../../../public/informacoesGarmin.svg";
-import logoStrava from "../../../../../../public/strava-logo-0.png"
+import logoStrava from "../../../../../../public/strava-logo-0.png";
 
-import { Info, Search } from "lucide-react";
+import { ImagePlusIcon, Search, CheckCircle2Icon } from "lucide-react";
 import Link from "next/link";
 import Templates from "@/components/Templates";
 import { useRouter } from "next/navigation";
@@ -18,35 +18,31 @@ const PHONE_HEIGHT = 479;
 export default function Modelo({ params }) {
   const { modelo } = React.use(params);
   const router = useRouter();
+
   useEffect(() => {
     if (modelo === "interativo") {
-      router.push("interativo/finalizado"); // Redireciona automaticamente
+      router.push("interativo/finalizado");
     }
   }, [modelo]);
-
-
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { activity, imageUrl, zoom, position, shapes, updateImage, updateZoom, updatePosition } = useImage();
   const [localImages, setLocalImages] = useState([]);
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
+  const [startTouch, setStartTouch] = useState(null);
+  const imageRef = useRef(null);
+  const [activeTab, setActiveTab] = useState('imagem');
+  const [search, setSearch] = useState('');
 
   const templates = [
-    {id: 1, title:"informações Strava", image: ModeloInfo, tags: ["info", "strava"]},
-    {id: 2, title:"informações Garmin", image: ModeloGarmin, tags: ["info"]},
-    {id: 3, title:"Logo Strava", image: logoStrava, tags: ["strava"]},
-  ]
-
-  const [isDragging, setIsDragging] = useState(false); 
-  const [startTouch, setStartTouch] = useState(null);
-
-  const imageRef = useRef(null); 
+    { id: 1, title: "Info Strava", image: ModeloInfo, tags: ["info", "strava"] },
+    { id: 2, title: "Info Garmin", image: ModeloGarmin, tags: ["info"] },
+    { id: 3, title: "Logo Strava", image: logoStrava, tags: ["strava"] },
+  ];
 
   const disableScroll = (e) => {
-    if (isDragging) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+    if (isDragging) { e.preventDefault(); e.stopPropagation(); }
   };
 
   useEffect(() => {
@@ -57,25 +53,20 @@ export default function Modelo({ params }) {
       document.body.style.overflow = 'auto';
       document.removeEventListener('touchmove', disableScroll);
     }
-  
     return () => {
       document.removeEventListener('touchmove', disableScroll);
       document.body.style.overflow = 'auto';
     };
   }, [isDragging]);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
   const handleUrlSubmit = () => {
     if (newImageUrl) {
       updateImage(newImageUrl);
-      setLocalImages((prev) => [newImageUrl, ...prev]); // Adiciona no início
+      setLocalImages((prev) => [newImageUrl, ...prev]);
       setNewImageUrl("");
-      closeModal();
+      setIsModalOpen(false);
     }
   };
-  
 
   const handleTouchStart = (e) => {
     if (e.touches.length === 1) {
@@ -83,7 +74,7 @@ export default function Modelo({ params }) {
       setStartTouch({ x: e.touches[0].clientX, y: e.touches[0].clientY });
     } else if (e.touches.length === 2) {
       const distance = getDistance(e.touches);
-      updateZoom((prevZoom) => prevZoom * (distance / 200)); // Ajusta o zoom com base na distância
+      updateZoom((prevZoom) => prevZoom * (distance / 200));
     }
   };
 
@@ -91,275 +82,246 @@ export default function Modelo({ params }) {
     if (isDragging && e.touches.length === 1) {
       const dx = e.touches[0].clientX - startTouch.x;
       const dy = e.touches[0].clientY - startTouch.y;
-      updatePosition((prevPos) => ({
-        x: prevPos.x + dx,
-        y: prevPos.y + dy,
-      }));
+      updatePosition((prevPos) => ({ x: prevPos.x + dx, y: prevPos.y + dy }));
       setStartTouch({ x: e.touches[0].clientX, y: e.touches[0].clientY });
     } else if (e.touches.length === 2) {
       const distance = getDistance(e.touches);
-      updateZoom((prevZoom) => prevZoom * (distance / 200)); // Ajusta o zoom com base na distância
+      updateZoom((prevZoom) => prevZoom * (distance / 200));
     }
   };
 
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-  };
+  const handleTouchEnd = () => setIsDragging(false);
 
   const getDistance = (touches) => {
     const dx = touches[0].clientX - touches[1].clientX;
     const dy = touches[0].clientY - touches[1].clientY;
     return Math.sqrt(dx * dx + dy * dy);
   };
+
   const shapesArray = Array.isArray(shapes) ? shapes : [];
 
   useEffect(() => {
-    
-    if (!imageUrl) {
-      if (activity?.photos?.primary?.urls) {
-        const keys = Object.keys(activity.photos.primary.urls)
-          .map(Number) 
-          .sort((a, b) => b - a); 
-        
-        const largestKey = keys[0];
-        const largestUrl = activity.photos.primary.urls[largestKey]; // Pega a URL correspondente
-        
-        console.log(largestUrl);
-        updateImage(largestUrl);
-      }
+    if (!imageUrl && activity?.photos?.primary?.urls) {
+      const keys = Object.keys(activity.photos.primary.urls).map(Number).sort((a, b) => b - a);
+      updateImage(activity.photos.primary.urls[keys[0]]);
     }
   }, []);
 
+  const stravaImages = activity?.photos?.primary?.urls
+    ? Object.keys(activity.photos.primary.urls)
+        .sort((a, b) => b - a)
+        .slice(0, 4)
+        .map(k => activity.photos.primary.urls[k])
+    : [];
 
-  
-  
-  
-  const [activeTab, setActiveTab] = useState('imagem'); // Estado para o menu
-  const [search, setSearch] = useState(''); // Estado para o menu
+  const allImages = [...localImages, ...stravaImages];
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
+  const tagLabels = { info: 'Informações', strava: 'Strava' };
 
   return (
-    <div className="font-inter">
-      {
-        (modelo === 'customizavel' || modelo === 'ambos') &&
-        <div className="flex flex-col items-center justify-center gap-y-6">
-          <h1 className="text-center text-3xl text-blueMain font-bold italic mt-14 w-10/12">Escolha um template para customizar </h1>
-          <div className="flex flex-col gap-y-12 items-center w-full bg-blueMain rounded-3xl px-5 py-8">
-            <div className="w-full flex justify-between items-center">
-              <h2 className="px-10 py-2 bg-white text-blueMain font-semibold text-center text-sm italic rounded-xl">Posts interativo</h2>
-              <Info className="text-white size-8" />
-            </div>
-            <div className="w-full flex flex-col items-center justify-center gap-y-10">
-              <div className="w-8/12">
-                <div className="flex">
-                  <div
-                    className={`relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600 w-full h-[479px]`}
-                    // ERA PARA SER PHONE_HEIGHT
-                  >
-                    {/* CASO A PESSOA COLOQUE A FOTO FORA DA TELA ELA PODE ESCOLHER A COR QUE DESEJA (ATUAL BG_GRAY_600) */}
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl z-50" />
-
-                      <div
-                        className={`w-[${PHONE_WIDTH}px]  h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
-                      >
-                        <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="" ref={imageRef} style={{transform: `scale(${zoom}) 
-                        translate(${position.x}px, ${position.y}px)`,  touchAction: 'none' }}
-                        onTouchStart={handleTouchStart}
-                        onTouchMove={handleTouchMove}
-                        onTouchEnd={handleTouchEnd}
-                        />
-                        <button
-                          className={`${imageUrl ? "hidden" : ""} bg-white p-3 rounded-full`}
-                          onClick={openModal}
-                        >
-                          Carregar Imagem
-                        </button>
-                        {shapesArray.map(shape => (
-                      <div
-                        key={shape.id}
-                        style={{
-                          position: 'absolute',
-                          left: shape.x,
-                          top: shape.y,
-                          width: shape.width,
-                          height: shape.height,
-                        }}
-                        className={`cursor-pointer`}
-                      >
-                        <img
-                          src={shape.templateUrl}
-                          alt="User added"
-                          className="w-full h-full object-cover"
-                          draggable="false"
-                        />
-                      </div>
-                    ))}
-                      </div>
-                    </div>
-                  </div>
-              </div>
-
-              <div className="font-inter">
-                {/* MENU DE SELEÇÃO */}
-                <div className="flex justify-center gap-4">
-                  <button
-                    onClick={() => handleTabChange('imagem')}
-                    className={`px-4 py-2 rounded-xl font-semibold ${activeTab === 'imagem' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                  >
-                    Imagem
-                  </button>
-                  <button
-                    onClick={() => handleTabChange('templates')}
-                    className={`px-4 py-2 rounded-xl font-semibold ${activeTab === 'templates' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                  >
-                    Templates
-                  </button>
-                </div>
-                </div>
-
-                {activeTab === 'imagem' && (
-                  <div className="grid grid-cols-3 gap-4">
-                  {/* Botão para carregar imagem */}
-                  <button
-                    onClick={openModal}
-                    className="flex items-center justify-center w-full h-32 bg-gray-300 rounded-lg hover:bg-gray-400 transition duration-200"
-                  >
-                    <span className="text-gray-700 font-semibold">Carregar Imagem</span>
-                  </button>
-
-                  {/* Renderiza imagens locais */}
-                  {localImages.map((url, index) => (
-                    <button
-                      key={`local-${index}`}
-                      onClick={() => updateImage(url)}
-                      className="flex items-center justify-center w-full h-32 bg-gray-300 rounded-lg hover:bg-gray-400 transition duration-200 overflow-hidden"
-                    >
-                      <img
-                        src={url}
-                        alt={`Imagem local ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
-
-  {/* Renderiza imagens da API (Strava) */}
-  {activity?.photos?.primary?.urls &&
-    Object.keys(activity.photos.primary.urls)
-      .sort((a, b) => b - a) // Ordena pela resolução
-      .slice(0, 4) // Mostra no máximo 4 imagens
-      .map((key, index) => (
-        <button
-          key={`api-${index}`}
-          onClick={() => updateImage(activity.photos.primary.urls[key])}
-          className="flex items-center justify-center w-full h-32 bg-gray-300 rounded-lg hover:bg-gray-400 transition duration-200 overflow-hidden"
-        >
-          <img
-            src={activity.photos.primary.urls[key]}
-            alt={`Imagem API ${index + 1}`}
-            className="w-full h-full object-cover"
-          />
-        </button>
-      ))}
-</div>
-              )}
-
-                {activeTab === 'templates' && 
-                <>
-                  <div className="w-full flex h-12 relative">
-                    <input 
-                      type="text" 
-                      className="w-full h-full flex bg-white rounded-lg text-sm pl-4 font-semibold placeholder:text-[#BCBCBC]" 
-                      placeholder="O que você esta procurando?" 
-                      onChange={(e) => setSearch(e.target.value)}
-                      value={search}
-                    />
-                    <Search className="absolute transform -translate-y-1/2 top-1/2 right-4 text-[#1E1E1E]" />
-                  </div>
-
-                  <div className="flex flex-col gap-y-4 justify-start items-start w-full">
-                    <h1 className="text-white font-semibold italic ml-1">Informações</h1>
-                    <div className="grid grid-cols-2 gap-4">
-                    {templates
-                      .filter((item) => 
-                        item.title.toLowerCase().includes(search.toLowerCase()) &&
-                        item.tags.some((tag) => tag.includes("info")) 
-                      )
-                      .map((item, _) => (
-                        <Templates 
-                          key={item.id} 
-                          title={item.title} 
-                          image={item.image} 
-                          template={item.id} 
-                        />
-                      ))
-                    }
-                    </div>
-                    <h1 className="text-white font-semibold italic ml-1">Strava</h1>
-                    <div className="grid grid-cols-2 gap-4">
-                    {templates
-                      .filter((item) => 
-                        item.title.toLowerCase().includes(search.toLowerCase()) &&
-                        item.tags.some((tag) => tag.includes("strava")) 
-                      )
-                      .map((item, _) => (
-                        <Templates 
-                          key={item.id} 
-                          title={item.title} 
-                          image={item.image} 
-                          template={item.id} 
-                        />
-                      ))
-                    }
-                    </div>
-                  </div>
-                </>
-                }
-
-              </div>
-          </div>
-          <div className="flex items-center justify-between w-full mt-6 px-4">
-            <button 
-              onClick={()=> history.go(-1)}
-              className="text-[#1E1E1E] font-semibold italic">
-              &lt; voltar
+    <div className="font-inter min-h-dvh bg-gray-50 flex flex-col">
+      {(modelo === 'customizavel' || modelo === 'ambos') && (
+        <>
+          {/* Header */}
+          <div className="px-5 pt-12 pb-4 flex items-center justify-between">
+            <button
+              onClick={() => history.go(-1)}
+              className="text-blueMain font-semibold text-sm"
+            >
+              ← Voltar
             </button>
-            <Link href={'customizavel/finalizado'}
-              className="bg-blueMain text-white px-10 py-1.5 rounded-2xl">
-              Compartilhar
+            <h1 className="text-base font-bold text-[#1E1E1E]">Criar Post</h1>
+            <Link
+              href="customizavel/finalizado"
+              className="bg-blueMain text-white text-sm px-4 py-1.5 rounded-xl font-semibold"
+            >
+              Pronto
             </Link>
           </div>
-        </div>
-      }
 
+          {/* Phone Preview */}
+          <div className="flex justify-center py-3">
+            <div
+              className="relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[36px] bg-gray-800 shadow-2xl shadow-black/30"
+              style={{ width: PHONE_WIDTH, height: PHONE_HEIGHT }}
+            >
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl z-50" />
+              <div
+                className="overflow-hidden flex items-center justify-center relative"
+                style={{ width: PHONE_WIDTH, height: PHONE_HEIGHT }}
+              >
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    className="max-w-none"
+                    alt=""
+                    ref={imageRef}
+                    style={{
+                      height: PHONE_HEIGHT,
+                      transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`,
+                      touchAction: 'none',
+                    }}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                  />
+                ) : (
+                  <button
+                    className="flex flex-col items-center gap-2 bg-white/10 px-6 py-5 rounded-2xl border border-white/20"
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    <ImagePlusIcon className="text-white" size={28} />
+                    <span className="text-white text-xs font-semibold">Adicionar foto</span>
+                  </button>
+                )}
+                {shapesArray.map(shape => (
+                  <div
+                    key={shape.id}
+                    style={{
+                      position: 'absolute',
+                      left: shape.x,
+                      top: shape.y,
+                      width: shape.width,
+                      height: shape.height,
+                    }}
+                  >
+                    <img src={shape.templateUrl} alt="" className="w-full h-full object-cover" draggable="false" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <p className="text-center text-[11px] text-gray-400 mb-1">
+            Arraste e faça pinch para ajustar a foto
+          </p>
+
+          {/* Bottom Panel */}
+          <div className="flex-1 bg-white rounded-t-3xl shadow-lg px-5 pt-5 pb-36">
+            {/* Tab switcher */}
+            <div className="flex gap-1 mb-5 bg-gray-100 p-1 rounded-xl">
+              {[
+                { key: 'imagem', label: 'Imagem' },
+                { key: 'templates', label: 'Templates' },
+              ].map(tab => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                    activeTab === tab.key
+                      ? 'bg-white text-blueMain shadow-sm'
+                      : 'text-gray-400'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Image Tab */}
+            {activeTab === 'imagem' && (
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="h-28 bg-gray-50 rounded-2xl flex flex-col items-center justify-center gap-1.5 border-2 border-dashed border-gray-200"
+                >
+                  <ImagePlusIcon size={20} className="text-gray-400" />
+                  <span className="text-[11px] text-gray-400 font-semibold">Adicionar</span>
+                </button>
+                {allImages.map((url, index) => (
+                  <button
+                    key={index}
+                    onClick={() => updateImage(url)}
+                    className={`h-28 rounded-2xl overflow-hidden relative transition-all duration-200 ${
+                      imageUrl === url ? 'ring-2 ring-blueMain ring-offset-2' : ''
+                    }`}
+                  >
+                    <img src={url} alt="" className="w-full h-full object-cover" />
+                    {imageUrl === url && (
+                      <div className="absolute inset-0 bg-blueMain/20 flex items-center justify-center">
+                        <CheckCircle2Icon className="text-white drop-shadow-md" size={22} />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Templates Tab */}
+            {activeTab === 'templates' && (
+              <div className="flex flex-col gap-5">
+                <div className="relative">
+                  <input
+                    type="text"
+                    className="w-full h-11 bg-gray-100 rounded-xl text-sm pl-4 pr-10 font-medium placeholder:text-gray-400 outline-none"
+                    placeholder="Buscar template..."
+                    onChange={(e) => setSearch(e.target.value)}
+                    value={search}
+                  />
+                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                </div>
+
+                {['info', 'strava'].map(tag => {
+                  const filtered = templates.filter(t =>
+                    t.title.toLowerCase().includes(search.toLowerCase()) &&
+                    t.tags.includes(tag)
+                  );
+                  if (!filtered.length) return null;
+                  return (
+                    <div key={tag}>
+                      <h2 className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-3">
+                        {tagLabels[tag]}
+                      </h2>
+                      <div className="grid grid-cols-2 gap-3">
+                        {filtered.map(item => (
+                          <Templates
+                            key={item.id}
+                            title={item.title}
+                            image={item.image}
+                            template={item.id}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* URL Modal — bottom sheet */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white rounded-xl p-6 w-80">
-            <h2 className="text-xl font-semibold mb-4">Digite o URL da imagem</h2>
+        <div
+          className="fixed inset-0 bg-black/60 flex items-end justify-center z-50"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="bg-white w-full rounded-t-3xl px-6 pt-5 pb-12"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-6" />
+            <h2 className="text-lg font-bold text-[#1E1E1E] mb-1">URL da imagem</h2>
+            <p className="text-sm text-gray-400 mb-5">
+              Cole o link de uma imagem para usar no post
+            </p>
             <input
-              type="text"
+              type="url"
               value={newImageUrl}
               onChange={(e) => setNewImageUrl(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-              placeholder="URL da imagem"
+              className="w-full p-3.5 bg-gray-100 rounded-xl text-sm mb-4 outline-none focus:ring-2 focus:ring-blueMain"
+              placeholder="https://exemplo.com/imagem.jpg"
             />
-            <div className="flex justify-end gap-4 mt-4">
-              <button onClick={closeModal} className="text-gray-500">Cancelar</button>
-              <button
-                onClick={handleUrlSubmit}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-              >
-                Confirmar
-              </button>
-            </div>
+            <button
+              onClick={handleUrlSubmit}
+              className="w-full bg-blueMain text-white py-3.5 rounded-xl font-semibold text-sm"
+            >
+              Confirmar
+            </button>
           </div>
         </div>
       )}
-      
-    
-  </div>
-
+    </div>
   );
 }

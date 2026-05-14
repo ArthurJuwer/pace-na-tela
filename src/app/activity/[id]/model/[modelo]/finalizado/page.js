@@ -3,18 +3,34 @@ import Image from "next/image";
 import PostLogo from "../../../../../../../public/postLogo.svg";
 import PostUser from "../../../../../../../public/postUser.svg";
 import PostExample from "../../../../../../../public/postTeste.svg";
-import { Facebook, Info, Instagram, Search, Upload } from "lucide-react";
+import { Facebook, Instagram, Upload } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useRef, useCallback } from "react";
+import { toPng } from 'html-to-image';
 import { useImage } from "@/context/ImageContext";
 
 
 export default function FinalizadoPage({ params }) {
-  const { id, modelo } = React.use(params); // Next.js automaticamente fornece os parâmetros
+  const { id, modelo } = React.use(params);
   const { imageUrl, zoom, position, shapes} = useImage();
   const PHONE_WIDTH = 230;
   const PHONE_HEIGHT = 479;
   const shapesArray = Array.isArray(shapes) ? shapes : [];
+  const phoneContentRef = useRef(null);
+
+  const handleDownload = useCallback(() => {
+    if (!phoneContentRef.current) return;
+    toPng(phoneContentRef.current, { cacheBust: true, pixelRatio: 3 })
+      .then((dataUrl) => {
+        const link = document.createElement('a');
+        link.download = 'pace-na-tela.png';
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch((err) => {
+        console.error('Erro ao gerar imagem:', err);
+      });
+  }, []);
 
   return (
     <div>
@@ -31,17 +47,19 @@ export default function FinalizadoPage({ params }) {
           <div className="w-8/12">
                           <div className="flex">
                             <div
-                              className={`relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600 w-full h-[479px]`}
-                              // ERA PARA SER PHONE_HEIGHT
+                              className="relative overflow-hidden flex items-center justify-center border-black border-[10px] rounded-[30px] bg-gray-600 w-full"
+                              style={{ height: PHONE_HEIGHT }}
                             >
                               {/* CASO A PESSOA COLOQUE A FOTO FORA DA TELA ELA PODE ESCOLHER A COR QUE DESEJA (ATUAL BG_GRAY_600) */}
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-4 bg-black rounded-b-3xl z-50" />
           
                                 
                                 <div
-                                  className={`w-[${PHONE_WIDTH}px]  h-[${PHONE_HEIGHT}px] ${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
+                                  ref={phoneContentRef}
+                                  className={`${imageUrl ? 'relative' : 'bg-gray-600'} overflow-hidden flex items-center justify-center`}
+                                  style={{ width: PHONE_WIDTH, height: PHONE_HEIGHT }}
                                 >
-                                  <img src={imageUrl} className={`max-w-none h-[${PHONE_HEIGHT}px]`} alt="" style={{transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`}} />
+                                  <img src={imageUrl} className="max-w-none" alt="" style={{ height: PHONE_HEIGHT, transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)` }} />
                                   
                                   {shapesArray.map(shape => (
                                 <div
@@ -94,15 +112,15 @@ export default function FinalizadoPage({ params }) {
               </div>
               
               <div className="flex flex-col gap-y-2 items-center">
-                <div className="size-12 rounded-full flex items-center justify-center bg-white">
+                <button onClick={handleDownload} className="size-12 rounded-full flex items-center justify-center bg-white">
                   <Upload className="text-blueMain"/>
-                </div>
-                <span className="text-white text-xs font-semibold">Mais </span>
+                </button>
+                <span className="text-white text-xs font-semibold">Baixar</span>
               </div>
             </div>
           </div>
         </div>
-          <button 
+          <button
             onClick={()=> history.go(-1)}
             className="text-[#1E1E1E] font-semibold italic">
             &lt; voltar

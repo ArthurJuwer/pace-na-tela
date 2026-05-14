@@ -7,13 +7,7 @@ import LogoBranca from "../../public/logobranca-pacenatela.svg";
 import pwrdByStrava from "../../public/api_logo_pwrdBy_strava_horiz_white.png";
 import cptblWithStrava from "../../public/api_logo_cptblWith_strava_horiz_white.png";
 
-import LogoAdidas from "../../public/logo-apps-integracao/Adidas.svg"
-import LogoAsics from "../../public/logo-apps-integracao/Asics.svg"
-import LogoStrava from "../../public/logo-apps-integracao/Strava.svg"
-import LogoUnder from "../../public/logo-apps-integracao/UnderArmounds.svg"
-
 import LogoIconeInstagram from "../../public/redes-sociais/Instagram.svg"
-import LogoIconeStrava from "../../public/redes-sociais/Strava.svg"
 
 import Main from "../../public/main.png";
 import Informacoes from "../../public/Informacoes.png";
@@ -21,7 +15,6 @@ import Templates from "../../public/templates.png";
 import PostsDivertidos from "../../public/postsdivertidos.png";
 
 import MenuHamburger from "@/components/MenuHamburger";
-import AppIntegrationInfo from "@/components/Home/AppIntegrationInfo";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Modal from "@/components/Home/Modal";
@@ -101,23 +94,7 @@ export default function Home() {
       </div>
       <Image src={PostsDivertidos} className="w-full h-auto px-4" alt="logo pace na tela" />
 
-      {/* <div className="bg-blueMain flex justify-center items-center p-8">
-        <h1 className="text-white text-center text-2xl font-bold w-10/12 italic">Quais apps o Pace na Tela tem integração?</h1>
-      </div> */}
-
-      <section id="integracoes" className="w-11/12 mx-auto grid grid-cols-4 place-content-center place-items-center gap-6">
-        {/* <Image src={LogoStrava} height={40} className="w-48 h-auto" alt="logo Strava" />
-        <Image src={LogoAdidas} height={40} className="w-48 h-auto" alt="logo Adidas" />
-        <Image src={LogoUnder} height={40} className="w-48 h-auto" alt="logo Under Armour" />
-        <Image src={LogoAsics} height={40} className="w-48 h-auto" alt="logo Asics" /> */}
-      </section>
-
-      <section  className="flex flex-col gap-5 items-center justify-center w-11/12 mx-auto">
-        {/* <AppIntegrationInfo image={LogoStrava} name={'Strava'} index={0}/>
-        <AppIntegrationInfo image={LogoAdidas} name={'Adidas RUNTASTIC'} index={1}/>
-        <AppIntegrationInfo image={LogoUnder}  name={'Under Armour RUN'} index={2}/>
-        <AppIntegrationInfo image={LogoAsics}  name={'Asics RUN'} index={3}/> */}
-      </section>
+      <div id="integracoes" />
 
       <footer className="bg-[#8C9BBC] w-full p-10 flex flex-col gap-y-8">
         <div className="flex items-center justify-between">
@@ -125,9 +102,6 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <div className="bg-white size-12 rounded-full flex items-center justify-center">
               <Image src={LogoIconeInstagram} width={25} height={25} alt="logo instagram" className="w-auto h-auto" />
-            </div>
-            <div className="bg-white size-12 rounded-full flex items-center justify-center">
-              {/* <Image src={LogoIconeStrava} width={25} height={25} alt="logo strava" className="w-auto h-auto"/> */}
             </div>
           </div>
         </div>

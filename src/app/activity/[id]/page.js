@@ -8,7 +8,7 @@ import { useActivityFetcher } from '@/hooks/ApiActivityFinder';
 
 const Activity = ({params}) => {
   const { id } = React.use(params); 
-  const { error } = useActivityFetcher(id);
+  const { error, loading } = useActivityFetcher(id);
   const [selectedPosts, setSelectedPosts] = useState({});
 
   const handleSelectPost = (postType) => {
@@ -34,7 +34,26 @@ const Activity = ({params}) => {
     
   };
 
-  if (error) return <div>Error: {error.message}</div>;
+  if (loading) return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-y-4 font-inter">
+      <div className="w-10 h-10 border-4 border-blueMain border-t-transparent rounded-full animate-spin" />
+      <p className="text-blueMain font-semibold italic">Carregando atividade...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-y-6 font-inter px-8">
+      <div className="bg-red-50 border border-red-200 rounded-2xl p-6 w-full max-w-sm flex flex-col items-center gap-y-4">
+        <p className="text-red-600 font-semibold text-center">{error}</p>
+        <button
+          onClick={() => history.go(-1)}
+          className="bg-blueMain text-white px-8 py-2 rounded-2xl font-semibold"
+        >
+          Voltar
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <>

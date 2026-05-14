@@ -1,8 +1,5 @@
 import Image from "next/image";
-// import LogoStrava from "../../../public/logo-apps-integracao/Strava.svg";
 import LogoStrava from "../../../public/logo-apps-integracao/btn_strava_connect_with_orange.png";
-import LogoAdidas from "../../../public/logo-apps-integracao/Adidas.svg";
-import { useState } from "react";
 
 export default function Modal({ closeModal }) {
     
@@ -23,25 +20,9 @@ export default function Modal({ closeModal }) {
                 <span className="block w-full h-1 bg-blueMain"></span>
             </div> */}
             <div className="flex items-center justify-center flex-col gap-y-4">
-
-                {/* ARRUMAR AQUI */}
-                    {/* <button 
-                        className="bg-[#8C9BBC] p-3 rounded-xl flex justify-center items-center gap-x-5 relative"
-                        onClick={handleLoginStrava}
-                    >
-                            <Image src={LogoStrava} className="h-8 w-auto absolute left-4" alt="logo strava" />
-                            <h1 className="text-center text-white font-semibold">Entrar com Strava</h1>
-                    </button> */}
-                        <h1 className="text-black">Conectar Abaixo pelo Strava</h1>
-                        <Image src={LogoStrava} className="h-8 w-auto " alt="logo strava" />
-
-                
-                
-                {/* <div className="bg-[#8C9BBC] p-3 rounded-xl flex items-center gap-x-5">
-                    <Image src={LogoAdidas} className="h-8  w-auto" alt="logo adidas" />
-                    <h1 className="text-center text-white font-semibold">Entrar com Adidas RUN</h1>
-                </div> */}
-                {/* <h1 cla ssName="text-center font-semibold text-blueSecond italic">Ver outros aplicativos</h1> */}
+                <button onClick={handleLoginStrava} className="cursor-pointer">
+                    <Image src={LogoStrava} className="h-12 w-auto" alt="Conectar com Strava" />
+                </button>
             </div>
         </div>
     );

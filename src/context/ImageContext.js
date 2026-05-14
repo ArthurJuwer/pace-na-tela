@@ -15,7 +15,7 @@ export const ImageProvider = ({ children }) => {
   const updateImage = (url) => setImageUrl(url);
   const updateZoom = (newZoom) => setZoom(newZoom);
   const updatePosition = (newPosition) => setPosition(newPosition);
-  const updateShapes = (newShapes) => setShapes(newShapes);
+  const updateShapes = (newShapes) => setShapes(Array.isArray(newShapes) ? newShapes : []);
   const updateAtualTemplate = (newTemplate) => setAtualTemplate(newTemplate);
   const updateActivity = (newActivity) => setActivity(newActivity);
 
