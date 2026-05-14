@@ -1,5 +1,13 @@
 import "./globals.css";
-import { ImageProvider } from '@/context/ImageContext'; // Importa o ImageProvider
+import { Inter } from 'next/font/google';
+import { ImageProvider } from '@/context/ImageContext';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const metadata = {
   title: "Pace na Tela",
@@ -8,9 +16,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR">
-      <body>
-        <ImageProvider> {/* Envolvendo a aplicação com o ImageProvider */}
+    <html lang="pt-BR" className={inter.variable}>
+      <body className={inter.className}>
+        <ImageProvider>
           {children}
         </ImageProvider>
       </body>
